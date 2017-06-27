@@ -1,12 +1,8 @@
 *.iml
 .gradle
 /local.properties
-<<<<<<< HEAD
-=======
->>>>>>> origin/master
 .DS_Store
 /build
 /captures
 .externalNativeBuild
 .idea/
-src/main/res/drawable/
