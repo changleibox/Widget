@@ -14,15 +14,17 @@ import android.view.LayoutInflater;
 public class TableView extends ContentFrameLayout {
 
     public TableView(Context context) {
-        super(context);
+        this(context, null);
     }
 
     public TableView(Context context, AttributeSet attrs) {
-        super(context, attrs);
+        this(context, attrs, 0);
     }
 
     public TableView(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
+
+        initializationLayout(context);
     }
 
     private void initializationLayout(Context context) {
