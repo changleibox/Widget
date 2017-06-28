@@ -26,6 +26,7 @@ import android.widget.Space;
 import com.box.me.widget.adapter.TableAdapter;
 import com.box.me.widget.compat.ViewCompat;
 import com.box.me.widget.entity.Table;
+import com.box.me.widget.helper.ScrollHelper;
 import com.box.me.widget.view.TableValueView;
 
 import java.util.List;
@@ -265,6 +266,7 @@ public class TableView extends ContentFrameLayout implements View.OnTouchListene
                 }
 
                 mTableAdapter.setTable(table);
+                new ScrollHelper(mValueView).moveToPosition(0);
 
                 resetPerformClickColumn(0);
             }
