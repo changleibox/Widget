@@ -1,54 +1,60 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!--
-  ~ Copyright © 2017 CHANGLEI. All rights reserved.
-  -->
-
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              xmlns:app="http://schemas.android.com/apk/res-auto"
+              xmlns:tools="http://schemas.android.com/tools"
               android:layout_width="match_parent"
-              android:layout_height="match_parent"
-              android:orientation="horizontal">
+              android:layout_height="wrap_content"
+              android:orientation="horizontal"
+              android:showDividers="middle"
+              tools:ignore="UselessParent">
 
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
-        <android.support.v4.widget.Space
+        <Space
+            android:id="@+id/spacer"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/sizeItemDefaultHeight"/>
+
+        <include layout="@layout/layout_divider_horizontal"/>
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/rv_row_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:minHeight="@dimen/sizeRowDefaultHeight"/>
-
-        <include layout="@layout/layout_horizontal_divider"/>
-
-        <ScrollView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content">
-
-            <LinearLayout
-                android:id="@+id/row_name_container"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"/>
-        </ScrollView>
-
+            android:fadingEdge="none"
+            android:overScrollMode="never"
+            android:scrollbars="none"
+            app:layoutManager="android.support.v7.widget.LinearLayoutManager"/>
     </LinearLayout>
 
     <HorizontalScrollView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content">
+        android:id="@+id/hsv_container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:fadingEdge="none"
+        android:overScrollMode="never"
+        android:scrollbars="none">
 
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:orientation="vertical">
 
-            <include layout="@layout/item_table_row"/>
+            <include
+                android:id="@+id/column_name_container"
+                layout="@layout/item_table"/>
 
             <android.support.v7.widget.RecyclerView
                 android:id="@+id/rv_value"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"/>
+                android:layout_height="wrap_content"
+                android:fadingEdge="none"
+                android:overScrollMode="never"
+                android:scrollbars="none"
+                app:layoutManager="android.support.v7.widget.LinearLayoutManager"/>
         </LinearLayout>
     </HorizontalScrollView>
-
 </LinearLayout>

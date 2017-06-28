@@ -1,8 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!--
-  ~ Copyright © 2017 CHANGLEI. All rights reserved.
-  -->
-
 <resources>
-    <dimen name="sizeRowDefaultHeight">48dp</dimen>
+    <dimen name="sizeItemDefaultHeight">48dp</dimen>
 </resources>

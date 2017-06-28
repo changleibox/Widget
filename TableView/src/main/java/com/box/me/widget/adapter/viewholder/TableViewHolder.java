@@ -1,21 +1,17 @@
-/*
- * Copyright © 2017 CHANGLEI. All rights reserved.
- */
-
 package com.box.me.widget.adapter.viewholder;
 
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
+import android.view.ViewGroup;
 
-/**
- * Created by Box on 2017/6/28.
- * <p>
- * ViewHolder
- */
+import com.box.me.widget.R;
 
 public class TableViewHolder extends RecyclerView.ViewHolder {
 
+    public ViewGroup rowContainer;
+
     public TableViewHolder(View itemView) {
         super(itemView);
+        rowContainer = itemView.findViewById(R.id.item_row_container);
     }
 }
