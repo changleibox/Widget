@@ -34,6 +34,7 @@ import java.util.List;
  * 表格控件，可上下左右滑动
  */
 
+@SuppressWarnings({"WeakerAccess", "deprecation"})
 public class TableView extends ContentFrameLayout implements View.OnTouchListener, RowNameAdapter.OnItemClickListener {
 
     private RecyclerView mValueView;
