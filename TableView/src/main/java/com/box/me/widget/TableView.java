@@ -9,6 +9,7 @@ import android.os.AsyncTask;
 import android.support.annotation.AttrRes;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.widget.NestedScrollView;
 import android.support.v7.widget.ContentFrameLayout;
 import android.support.v7.widget.RecyclerView;
 import android.util.AttributeSet;
@@ -18,10 +19,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver.OnGlobalLayoutListener;
 import android.widget.HorizontalScrollView;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Space;
 
-import com.box.me.widget.adapter.RowNameAdapter;
 import com.box.me.widget.adapter.TableAdapter;
 import com.box.me.widget.entity.Table;
 import com.box.me.widget.view.TableValueView;
@@ -35,15 +36,15 @@ import java.util.List;
  */
 
 @SuppressWarnings({"WeakerAccess", "deprecation"})
-public class TableView extends ContentFrameLayout implements View.OnTouchListener, RowNameAdapter.OnItemClickListener {
+public class TableView extends ContentFrameLayout implements View.OnTouchListener {
 
     private RecyclerView mValueView;
-    private RecyclerView mRowNameView;
     private LinearLayout mColumnNameContainer;
     private HorizontalScrollView mHsvContainer;
     private Space mSpacer;
+    private LinearLayout mRowNameContainer;
+    private NestedScrollView mRowScrollView;
 
-    private RowNameAdapter mRowNameAdapter;
     private TableAdapter mTableAdapter;
 
     private AssembleTask mAssembleTask;
@@ -52,6 +53,11 @@ public class TableView extends ContentFrameLayout implements View.OnTouchListene
 
     @Nullable
     private View mTmpClickColumnView;
+
+    private LayoutInflater mInflater;
+
+    @Nullable
+    private Table mTable;
 
     @Nullable
     private OnSortListener mSortListener;
@@ -72,6 +78,7 @@ public class TableView extends ContentFrameLayout implements View.OnTouchListene
     }
 
     public void setTable(@NonNull final Table table) {
+        mTable = table;
         if (mAssembleTask != null) {
             mAssembleTask.cancel(true);
             mAssembleTask = null;
@@ -92,7 +99,7 @@ public class TableView extends ContentFrameLayout implements View.OnTouchListene
             isReverse = true;
             sortedRows = mTableAdapter.sort(column);
         }
-        mRowNameAdapter.setRows(sortedRows);
+        setRowNames(sortedRows, mTable != null && mTable.isHasAvatar());
 
         if (mSortListener != null) {
             mSortListener.onSort(this, column, sortedRows);
@@ -118,13 +125,6 @@ public class TableView extends ContentFrameLayout implements View.OnTouchListene
         return true;
     }
 
-    @Override
-    public void onItemClick(int position, Table.Row row) {
-        if (mRowClickListener != null) {
-            mRowClickListener.onRowClick(this, position, row);
-        }
-    }
-
     public void setOnSortListener(OnSortListener listener) {
         this.mSortListener = listener;
     }
@@ -134,39 +134,80 @@ public class TableView extends ContentFrameLayout implements View.OnTouchListene
     }
 
     private void initializationLayout(Context context) {
-        LayoutInflater.from(context).inflate(R.layout.layout_table_view, this, true);
+        mInflater = LayoutInflater.from(context);
+        mInflater.inflate(R.layout.layout_table_view, this, true);
         mValueView = findViewById(R.id.rv_value);
-        mRowNameView = findViewById(R.id.rv_row_name);
         mColumnNameContainer = findViewById(R.id.item_row_container);
         mHsvContainer = findViewById(R.id.hsv_container);
         mSpacer = findViewById(R.id.spacer);
+        mRowNameContainer = findViewById(R.id.row_name_container);
+        mRowScrollView = findViewById(R.id.row_scroll);
 
         mValueView.addOnScrollListener(new RecyclerView.OnScrollListener() {
 
             @Override
             public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
                 if (recyclerView.getScrollState() != RecyclerView.SCROLL_STATE_IDLE) {
-                    mRowNameView.scrollBy(dx, dy);
-                } else {
-                    mTableAdapter.notifyDataSetChanged();
-                }
-
-                for (int i = 0; i < mRowNameAdapter.getItemCount(); i++) {
-                    View view = mRowNameView.getChildAt(i);
-                    Table.Row row = mRowNameAdapter.getRow(i);
-                    if (row != null && view != null) {
-                        row.setHeight(mRowNameView.getLayoutManager().getDecoratedMeasuredHeight(view));
-                    }
+                    mRowScrollView.scrollBy(dx, dy);
                 }
             }
         });
 
-        mRowNameView.setOnTouchListener(this);
+        mRowScrollView.setOnTouchListener(this);
 
         mValueView.setAdapter(mTableAdapter = new TableAdapter(context));
-        mRowNameView.setAdapter(mRowNameAdapter = new RowNameAdapter(getContext()));
+    }
 
-        mRowNameAdapter.setOnItemClickListener(this);
+    private void setRowNames(List<Table.Row> rows, boolean hasAvatar) {
+        mRowScrollView.scrollTo(0, 0);
+        mRowNameContainer.removeAllViews();
+        for (int rowIndex = 0; rowIndex < rows.size(); rowIndex++) {
+            View itemRowName = mInflater.inflate(R.layout.item_table, mRowNameContainer, false);
+            LinearLayout rowContainer = itemRowName.findViewById(R.id.item_row_container);
+
+            final Table.Row row = rows.get(rowIndex);
+
+            View itemView = mInflater.inflate(R.layout.layout_row_name, rowContainer, false);
+            TableValueView rowNameView = itemView.findViewById(R.id.tv_name);
+            ImageView ivAvatar = itemView.findViewById(R.id.iv_avatar);
+
+            ivAvatar.setVisibility(hasAvatar ? View.VISIBLE : View.GONE);
+            ivAvatar.setImageResource(R.mipmap.ic_launcher_round);
+            rowNameView.setText(row.getRowName());
+
+            rowContainer.removeAllViews();
+            rowContainer.addView(itemView, LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
+
+            mRowNameContainer.addView(itemRowName, LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
+
+            final int finalRowIndex = rowIndex;
+            itemRowName.setOnClickListener(new OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    if (mRowClickListener != null) {
+                        mRowClickListener.onRowClick(TableView.this, finalRowIndex, row);
+                    }
+                }
+            });
+        }
+    }
+
+    private void setColumnNames(List<String> columnNames) {
+        mHsvContainer.scrollTo(0, 0);
+        mColumnNameContainer.removeAllViews();
+        for (int columnIndex = 0; columnIndex < columnNames.size(); columnIndex++) {
+            TableValueView valueView = new TableValueView(getContext());
+            valueView.setText(columnNames.get(columnIndex));
+            mColumnNameContainer.addView(valueView);
+
+            final int tmpColumnIndex = columnIndex;
+            valueView.setOnClickListener(new OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    performClickColumn(tmpColumnIndex);
+                }
+            });
+        }
     }
 
     private class AssembleTask extends AsyncTask<Table, Void, Table> implements OnGlobalLayoutListener {
@@ -193,37 +234,33 @@ public class TableView extends ContentFrameLayout implements View.OnTouchListene
         @Override
         protected void onPostExecute(final Table table) {
             this.table = table;
-            mHsvContainer.scrollTo(0, 0);
-            mColumnNameContainer.removeAllViews();
-            List<String> columnNames = table.getColumnNames();
-            for (int columnIndex = 0; columnIndex < columnNames.size(); columnIndex++) {
-                TableValueView valueView = new TableValueView(getContext());
-                valueView.setText(columnNames.get(columnIndex));
-                mColumnNameContainer.addView(valueView);
 
-                final int tmpColumnIndex = columnIndex;
-                valueView.setOnClickListener(new OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        performClickColumn(tmpColumnIndex);
+            setColumnNames(table.getColumnNames());
+            setRowNames(table.getRows(), table.isHasAvatar());
+
+            mColumnNameContainer.getViewTreeObserver().addOnGlobalLayoutListener(new OnGlobalLayoutListener() {
+                @Override
+                public void onGlobalLayout() {
+                    mColumnNameContainer.getViewTreeObserver().removeGlobalOnLayoutListener(this);
+
+                    int childCount = mColumnNameContainer.getChildCount();
+                    for (int i = 0; i < childCount; i++) {
+                        table.setColumnWidth(i, mColumnNameContainer.getChildAt(i).getWidth());
                     }
-                });
-            }
 
-            mColumnNameContainer.getViewTreeObserver().addOnGlobalLayoutListener(this);
+                    mRowNameContainer.getViewTreeObserver().addOnGlobalLayoutListener(AssembleTask.this);
+                }
+            });
         }
 
         @Override
         public void onGlobalLayout() {
-            mColumnNameContainer.getViewTreeObserver().removeGlobalOnLayoutListener(this);
+            mRowNameContainer.getViewTreeObserver().removeGlobalOnLayoutListener(this);
 
-            int childCount = mColumnNameContainer.getChildCount();
-            for (int i = 0; i < childCount; i++) {
-                table.setColumnWidth(i, mColumnNameContainer.getChildAt(i).getWidth());
+            List<Table.Row> rows = table.getRows();
+            for (int i = 0; i < rows.size(); i++) {
+                rows.get(i).setHeight(mRowNameContainer.getChildAt(i).getHeight());
             }
-
-            mRowNameAdapter.setRows(table.getRows());
-            mRowNameAdapter.setHasAvatar(table.isHasAvatar());
 
             mTableAdapter.setTable(table);
 

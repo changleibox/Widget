@@ -20,14 +20,30 @@
 
         <include layout="@layout/layout_divider_horizontal"/>
 
-        <android.support.v7.widget.RecyclerView
-            android:id="@+id/rv_row_name"
+        <!--<android.support.v7.widget.RecyclerView-->
+        <!--android:id="@+id/rv_row_name"-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:fadingEdge="none"-->
+        <!--android:overScrollMode="never"-->
+        <!--android:scrollbars="none"-->
+        <!--android:visibility="gone"-->
+        <!--app:layoutManager="android.support.v7.widget.LinearLayoutManager"/>-->
+
+        <android.support.v4.widget.NestedScrollView
+            android:id="@+id/row_scroll"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:fadingEdge="none"
             android:overScrollMode="never"
-            android:scrollbars="none"
-            app:layoutManager="android.support.v7.widget.LinearLayoutManager"/>
+            android:scrollbars="none">
+
+            <LinearLayout
+                android:id="@+id/row_name_container"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"/>
+        </android.support.v4.widget.NestedScrollView>
     </LinearLayout>
 
     <HorizontalScrollView
