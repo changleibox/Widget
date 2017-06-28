@@ -24,6 +24,7 @@ import android.widget.LinearLayout;
 import android.widget.Space;
 
 import com.box.me.widget.adapter.TableAdapter;
+import com.box.me.widget.compat.ViewCompat;
 import com.box.me.widget.entity.Table;
 import com.box.me.widget.view.TableValueView;
 
@@ -210,7 +211,7 @@ public class TableView extends ContentFrameLayout implements View.OnTouchListene
         }
     }
 
-    private class AssembleTask extends AsyncTask<Table, Void, Table> implements OnGlobalLayoutListener {
+    private class AssembleTask extends AsyncTask<Table, Void, Table> {
 
         private Table table;
 
@@ -238,33 +239,35 @@ public class TableView extends ContentFrameLayout implements View.OnTouchListene
             setColumnNames(table.getColumnNames());
             setRowNames(table.getRows(), table.isHasAvatar());
 
-            mColumnNameContainer.getViewTreeObserver().addOnGlobalLayoutListener(new OnGlobalLayoutListener() {
-                @Override
-                public void onGlobalLayout() {
-                    mColumnNameContainer.getViewTreeObserver().removeGlobalOnLayoutListener(this);
-
-                    int childCount = mColumnNameContainer.getChildCount();
-                    for (int i = 0; i < childCount; i++) {
-                        table.setColumnWidth(i, mColumnNameContainer.getChildAt(i).getWidth());
-                    }
-
-                    mRowNameContainer.getViewTreeObserver().addOnGlobalLayoutListener(AssembleTask.this);
-                }
-            });
+            ViewCompat.addOnceOnGlobalLayoutListener(mColumnNameContainer, new ColumnLayoutListener());
         }
 
-        @Override
-        public void onGlobalLayout() {
-            mRowNameContainer.getViewTreeObserver().removeGlobalOnLayoutListener(this);
+        private class ColumnLayoutListener implements OnGlobalLayoutListener {
 
-            List<Table.Row> rows = table.getRows();
-            for (int i = 0; i < rows.size(); i++) {
-                rows.get(i).setHeight(mRowNameContainer.getChildAt(i).getHeight());
+            @Override
+            public void onGlobalLayout() {
+                int childCount = mColumnNameContainer.getChildCount();
+                for (int i = 0; i < childCount; i++) {
+                    table.setColumnWidth(i, mColumnNameContainer.getChildAt(i).getWidth());
+                }
+
+                ViewCompat.addOnceOnGlobalLayoutListener(mRowNameContainer, new RowLayoutListener());
             }
+        }
 
-            mTableAdapter.setTable(table);
+        private class RowLayoutListener implements OnGlobalLayoutListener {
 
-            resetPerformClickColumn(0);
+            @Override
+            public void onGlobalLayout() {
+                List<Table.Row> rows = table.getRows();
+                for (int i = 0; i < rows.size(); i++) {
+                    rows.get(i).setHeight(mRowNameContainer.getChildAt(i).getHeight());
+                }
+
+                mTableAdapter.setTable(table);
+
+                resetPerformClickColumn(0);
+            }
         }
 
     }
