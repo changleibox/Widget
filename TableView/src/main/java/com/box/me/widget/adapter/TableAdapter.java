@@ -65,11 +65,10 @@ public final class TableAdapter extends RecyclerView.Adapter<TableViewHolder> {
             holder.rowContainer.addView(valueView, params);
 
             if (mValueClickListener != null) {
-                final int finalColumnIndex = columnIndex;
                 valueView.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        mValueClickListener.onValueClick(finalColumnIndex, row, value);
+                        mValueClickListener.onValueClick(value);
                     }
                 });
             }
@@ -126,7 +125,7 @@ public final class TableAdapter extends RecyclerView.Adapter<TableViewHolder> {
     }
 
     public interface OnValueClickListener {
-        void onValueClick(int columnIndex, Table.Row row, Table.Value value);
+        void onValueClick(Table.Value value);
     }
 
 }

@@ -155,9 +155,9 @@ public class TableView extends ContentFrameLayout implements View.OnTouchListene
     public void setOnValueClickListener(final OnValueClickListener listener) {
         mTableAdapter.setOnValueClickListener(new TableAdapter.OnValueClickListener() {
             @Override
-            public void onValueClick(int columnIndex, Table.Row row, Table.Value value) {
+            public void onValueClick(Table.Value value) {
                 if (listener != null) {
-                    listener.onValueClick(TableView.this, columnIndex, row, value);
+                    listener.onValueClick(TableView.this, value);
                 }
             }
         });
@@ -315,6 +315,6 @@ public class TableView extends ContentFrameLayout implements View.OnTouchListene
     }
 
     public interface OnValueClickListener {
-        void onValueClick(TableView view, int columnIndex, Table.Row row, Table.Value value);
+        void onValueClick(TableView view, Table.Value value);
     }
 }
