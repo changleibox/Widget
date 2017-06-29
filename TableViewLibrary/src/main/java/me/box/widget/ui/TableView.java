@@ -9,9 +9,11 @@ import android.support.v7.widget.RecyclerView;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.widget.HorizontalScrollView;
 import android.widget.LinearLayout;
+import android.widget.Space;
 
 import java.util.List;
 
@@ -31,6 +33,8 @@ public class TableView extends ContentFrameLayout {
     private LinearLayout mRowHeaderContainer;
     private LinearLayout mColumnHeaderContainer;
     private RecyclerView mValueContainer;
+
+    private Space mSpacer;
 
     private ScrollHelper mScrollHelper;
     private LayoutInflater mInflater;
@@ -58,6 +62,15 @@ public class TableView extends ContentFrameLayout {
         super(context, attrs, defStyleAttr);
 
         initializationLayout(context);
+    }
+
+    @Override
+    protected void onLayout(boolean changed, int left, int top, int right, int bottom) {
+        super.onLayout(changed, left, top, right, bottom);
+
+        ViewGroup.LayoutParams layoutParams = mSpacer.getLayoutParams();
+        layoutParams.height = mColumnHeaderContainer.getHeight();
+        mSpacer.setLayoutParams(layoutParams);
     }
 
     public void setAdapter(TableAdapter adapter) {
@@ -96,6 +109,7 @@ public class TableView extends ContentFrameLayout {
         mRowHeaderContainer = findViewById(R.id.row_header_container);
         mColumnHeaderContainer = findViewById(R.id.column_header_container);
         mValueContainer = findViewById(R.id.rv_value);
+        mSpacer = findViewById(R.id.spacer);
 
         mScrollHelper = new ScrollHelper(mValueContainer);
 
