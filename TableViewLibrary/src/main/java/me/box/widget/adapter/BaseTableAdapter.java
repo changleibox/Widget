@@ -1,8 +1,10 @@
+/*
+ * Copyright © 2017 CHANGLEI. All rights reserved.
+ */
+
 package me.box.widget.adapter;
 
-import android.content.Context;
-import android.support.annotation.NonNull;
-import android.view.LayoutInflater;
+import android.database.DataSetObserver;
 
 /**
  * Created by box on 2017/6/29.
@@ -12,16 +14,22 @@ import android.view.LayoutInflater;
 
 public abstract class BaseTableAdapter implements TableAdapter {
 
-    private Context mContext;
-    private LayoutInflater mInflater;
-
-    public BaseTableAdapter(@NonNull Context context) {
-        this.mContext = context;
-        this.mInflater = LayoutInflater.from(context);
+    public BaseTableAdapter() {
     }
 
-    public Context getContext() {
-        return mContext;
+    public void notifyDataSetChanged() {
     }
 
+    public void notifyDataSetInvalidated() {
+    }
+
+    @Override
+    public void registerDataSetObserver(DataSetObserver var1) {
+
+    }
+
+    @Override
+    public void unregisterDataSetObserver(DataSetObserver var1) {
+
+    }
 }

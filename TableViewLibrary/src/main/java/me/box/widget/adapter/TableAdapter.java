@@ -1,5 +1,10 @@
+/*
+ * Copyright © 2017 CHANGLEI. All rights reserved.
+ */
+
 package me.box.widget.adapter;
 
+import android.database.DataSetObserver;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,6 +16,10 @@ import android.view.ViewGroup;
  */
 
 public interface TableAdapter {
+
+    void registerDataSetObserver(DataSetObserver var1);
+
+    void unregisterDataSetObserver(DataSetObserver var1);
 
     View getColumnHeaderView(LayoutInflater inflater, ViewGroup parent, int columnIndex);
 
