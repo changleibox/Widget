@@ -1,1 +1,1 @@
-include ':TableView'
+include ':TableView', ':testtableview'
