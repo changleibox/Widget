@@ -44,7 +44,7 @@ public final class ValueAdapter extends RecyclerView.Adapter<TableViewHolder> {
 
     @Override
     public TableViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        return new TableViewHolder(LayoutInflater.from(mContext).inflate(R.layout.item_table, parent, false));
+        return new TableViewHolder(LayoutInflater.from(mContext).inflate(R.layout.widget_item_table, parent, false));
     }
 
     @Override

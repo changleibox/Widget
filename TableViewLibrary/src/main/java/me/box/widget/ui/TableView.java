@@ -26,6 +26,7 @@ import me.box.widget.adapter.TableAdapter;
  * 表哥控件
  */
 
+@SuppressWarnings({"WeakerAccess", "unused"})
 public class TableView extends ContentFrameLayout {
 
     private NestedScrollView mRowScrollView;
@@ -102,7 +103,7 @@ public class TableView extends ContentFrameLayout {
     private void initializationLayout(Context context) {
         mInflater = LayoutInflater.from(context);
 
-        mInflater.inflate(R.layout.layout_table_view, this, true);
+        mInflater.inflate(R.layout.widget_layout_table_view, this, true);
 
         mRowScrollView = findViewById(R.id.row_scroll);
         mContentScrollView = findViewById(R.id.content_container);
