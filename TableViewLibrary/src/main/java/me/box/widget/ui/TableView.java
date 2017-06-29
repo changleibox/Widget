@@ -22,10 +22,12 @@ import android.view.ViewTreeObserver;
 import android.widget.HorizontalScrollView;
 import android.widget.LinearLayout;
 import android.widget.Space;
+import android.widget.TextView;
 
 import java.util.List;
 
 import me.box.widget.R;
+import me.box.widget.adapter.BaseTableAdapter;
 import me.box.widget.adapter.TableAdapter;
 
 /**
@@ -82,6 +84,11 @@ public class TableView extends ContentFrameLayout {
         a.recycle();
 
         initializationLayout(context);
+
+        if (!isInEditMode()) {
+            return;
+        }
+        setAdapter(new PreviewAdapter());
     }
 
     @Override
@@ -309,4 +316,41 @@ public class TableView extends ContentFrameLayout {
     public interface OnValueClickListener {
         void onValueClick(TableView view, Table.Value value);
     }
+
+    private class PreviewAdapter extends BaseTableAdapter {
+
+        @Override
+        public View getColumnHeaderView(LayoutInflater inflater, ViewGroup parent, int columnIndex) {
+            return getView(String.format("Column%1$s", columnIndex));
+        }
+
+        @Override
+        public View getRowHeaderView(LayoutInflater inflater, ViewGroup parent, int rowIndex) {
+            return getView(String.format("Row%1$s", rowIndex));
+        }
+
+        @Override
+        public View getValueView(LayoutInflater inflater, ViewGroup parent, int columnIndex, int rowIndex) {
+            return getView(String.format("Value%1$s,%2$s", columnIndex, rowIndex));
+        }
+
+        @Override
+        public int getColumnCount() {
+            return 10;
+        }
+
+        @Override
+        public int getRowCount() {
+            return 10;
+        }
+
+        private View getView(CharSequence text) {
+            TextView textView = new TextView(getContext());
+            textView.setTextAppearance(getContext(), R.style.TextAppearance_AppCompat);
+            textView.setText(text);
+            textView.setLayoutParams(new ViewGroup.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
+            return textView;
+        }
+    }
+
 }
