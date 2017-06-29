@@ -116,6 +116,10 @@ public class TestTableViewActivity extends BaseActivity implements SwipeRefreshL
                     ivAvatar.setVisibility(table.isHasAvatar() ? View.VISIBLE : View.GONE);
                     ivAvatar.setImageResource(R.mipmap.ic_launcher_round);
                     rowNameView.setText(row.getRowName());
+
+                    ViewGroup.LayoutParams layoutParams = itemView.getLayoutParams();
+                    layoutParams.width = ViewGroup.LayoutParams.MATCH_PARENT;
+                    itemView.setLayoutParams(layoutParams);
                     return itemView;
                 }
 
