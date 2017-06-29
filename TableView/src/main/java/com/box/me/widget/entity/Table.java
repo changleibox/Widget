@@ -186,7 +186,8 @@ public class Table {
         private double value;
         private String label;
         private int columnIndex;
-        private int rowIndex;
+        private int rawRowIndex;
+        private int currentRowIndex;
 
         public Value(double value) {
             this(DEFAULT_FORMAT.format(value), value);
@@ -221,12 +222,20 @@ public class Table {
             this.columnIndex = columnIndex;
         }
 
-        public int getRowIndex() {
-            return rowIndex;
+        public int getRawRowIndex() {
+            return rawRowIndex;
         }
 
-        public void setRowIndex(int rowIndex) {
-            this.rowIndex = rowIndex;
+        public void setRawRowIndex(int rawRowIndex) {
+            this.rawRowIndex = rawRowIndex;
+        }
+
+        public int getCurrentRowIndex() {
+            return currentRowIndex;
+        }
+
+        public void setCurrentRowIndex(int currentRowIndex) {
+            this.currentRowIndex = currentRowIndex;
         }
     }
 }

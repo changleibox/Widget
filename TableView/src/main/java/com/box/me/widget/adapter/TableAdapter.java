@@ -57,8 +57,8 @@ public final class TableAdapter extends RecyclerView.Adapter<TableViewHolder> {
         final Table.Row row = mRows.get(position);
         List<Table.Value> values = row.getValues();
         for (int columnIndex = 0; columnIndex < mColumnNames.size(); columnIndex++) {
-            TableValueView valueView = new TableValueView(mContext,
-                    columnIndex >= values.size() ? new Table.Value(0.0d) : values.get(columnIndex));
+            final Table.Value value = columnIndex >= values.size() ? new Table.Value(0.0d) : values.get(columnIndex);
+            TableValueView valueView = new TableValueView(mContext, value);
             LayoutParams params = valueView.getLayoutParams();
             params.width = mTable == null ? 0 : mTable.getColumnWidth(columnIndex);
             params.height = LayoutParams.MATCH_PARENT;
@@ -69,7 +69,7 @@ public final class TableAdapter extends RecyclerView.Adapter<TableViewHolder> {
                 valueView.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        mValueClickListener.onValueClick(finalColumnIndex, row);
+                        mValueClickListener.onValueClick(finalColumnIndex, row, value);
                     }
                 });
             }
@@ -126,7 +126,7 @@ public final class TableAdapter extends RecyclerView.Adapter<TableViewHolder> {
     }
 
     public interface OnValueClickListener {
-        void onValueClick(int columnIndex, Table.Row row);
+        void onValueClick(int columnIndex, Table.Row row, Table.Value value);
     }
 
 }

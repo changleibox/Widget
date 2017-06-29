@@ -155,9 +155,9 @@ public class TableView extends ContentFrameLayout implements View.OnTouchListene
     public void setOnValueClickListener(final OnValueClickListener listener) {
         mTableAdapter.setOnValueClickListener(new TableAdapter.OnValueClickListener() {
             @Override
-            public void onValueClick(int columnIndex, Table.Row row) {
+            public void onValueClick(int columnIndex, Table.Row row, Table.Value value) {
                 if (listener != null) {
-                    listener.onValueClick(TableView.this, columnIndex, row);
+                    listener.onValueClick(TableView.this, columnIndex, row, value);
                 }
             }
         });
@@ -198,6 +198,10 @@ public class TableView extends ContentFrameLayout implements View.OnTouchListene
 
             final Table.Row row = rows.get(rowIndex);
             row.setCurrentRowIndex(rowIndex);
+            List<Table.Value> values = row.getValues();
+            for (Table.Value value : values) {
+                value.setCurrentRowIndex(rowIndex);
+            }
 
             View itemView = mInflater.inflate(R.layout.layout_row_name, rowContainer, false);
             TableValueView rowNameView = itemView.findViewById(R.id.tv_name);
@@ -255,7 +259,7 @@ public class TableView extends ContentFrameLayout implements View.OnTouchListene
                 List<Table.Value> values = row.getValues();
                 for (int columnIndex = 0; columnIndex < values.size(); columnIndex++) {
                     Table.Value value = values.get(columnIndex);
-                    value.setRowIndex(rowIndex);
+                    value.setRawRowIndex(rowIndex);
                     value.setColumnIndex(columnIndex);
                 }
             }
@@ -311,6 +315,6 @@ public class TableView extends ContentFrameLayout implements View.OnTouchListene
     }
 
     public interface OnValueClickListener {
-        void onValueClick(TableView view, int columnIndex, Table.Row row);
+        void onValueClick(TableView view, int columnIndex, Table.Row row, Table.Value value);
     }
 }
