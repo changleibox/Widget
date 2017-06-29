@@ -17,7 +17,7 @@
         <me.box.widget.ui.TableView
             android:id="@+id/vh_recycler_view"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:background="@android:color/white"
             app:columnHeaderDivider="@drawable/shape_horizontal_divider"
             app:rowHeaderDivider="@drawable/shape_vertical_divider"/>
