@@ -7,9 +7,7 @@ import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.FrameLayout;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -108,22 +106,16 @@ public class TestTableViewActivity extends BaseActivity implements SwipeRefreshL
 
                 @Override
                 public View getRowHeaderView(LayoutInflater inflater, ViewGroup parent, int rowIndex) {
-                    View itemRowName = inflater.inflate(R.layout.item_table, parent, false);
-                    LinearLayout rowContainer = itemRowName.findViewById(R.id.item_row_container);
-
                     final Table.Row row = table.getRows().get(rowIndex);
 
-                    View itemView = inflater.inflate(R.layout.layout_row_name, rowContainer, false);
+                    View itemView = inflater.inflate(R.layout.layout_row_name, parent, false);
                     TableValueView rowNameView = itemView.findViewById(R.id.tv_name);
                     ImageView ivAvatar = itemView.findViewById(R.id.iv_avatar);
 
                     ivAvatar.setVisibility(table.isHasAvatar() ? View.VISIBLE : View.GONE);
                     ivAvatar.setImageResource(R.mipmap.ic_launcher_round);
                     rowNameView.setText(row.getRowName());
-
-                    rowContainer.removeAllViews();
-                    rowContainer.addView(itemView, FrameLayout.LayoutParams.MATCH_PARENT, FrameLayout.LayoutParams.WRAP_CONTENT);
-                    return itemRowName;
+                    return itemView;
                 }
 
                 @Override
