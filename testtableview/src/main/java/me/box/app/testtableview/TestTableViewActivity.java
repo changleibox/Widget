@@ -3,6 +3,7 @@ package me.box.app.testtableview;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -101,6 +102,7 @@ public class TestTableViewActivity extends BaseActivity implements SwipeRefreshL
                 public View getColumnHeaderView(LayoutInflater inflater, ViewGroup parent, int columnIndex) {
                     TableValueView valueView = new TableValueView(getContext());
                     valueView.setText(table.getColumnNames().get(columnIndex));
+                    valueView.setMinHeight((int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 48, getResources().getDisplayMetrics()));
                     return valueView;
                 }
 
