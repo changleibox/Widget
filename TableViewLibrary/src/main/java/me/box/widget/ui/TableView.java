@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
+import android.support.annotation.DrawableRes;
 import android.support.annotation.Nullable;
 import android.support.v4.widget.NestedScrollView;
 import android.support.v7.widget.ContentFrameLayout;
@@ -64,13 +65,21 @@ public class TableView extends ContentFrameLayout {
         this(context, attrs, 0);
     }
 
+    @SuppressWarnings("deprecation")
     public TableView(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
 
         TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.RecyclerView, defStyleAttr, 0);
 
-        mColumnDivider = a.getDrawable(R.styleable.TableView_columnHeaderDivider);
-        mRowDivider = a.getDrawable(R.styleable.TableView_rowHeaderDivider);
+        int columnDividerId = a.getResourceId(R.styleable.TableView_columnHeaderDivider, 0);
+        int rowDividerId = a.getResourceId(R.styleable.TableView_rowHeaderDivider, 0);
+
+        if (columnDividerId != 0) {
+            mColumnDivider = getDrawable(columnDividerId);
+        }
+        if (rowDividerId != 0) {
+            mRowDivider = getDrawable(rowDividerId);
+        }
 
         a.recycle();
 
@@ -191,6 +200,15 @@ public class TableView extends ContentFrameLayout {
                 }
             });
         }
+    }
+
+    private Drawable getDrawable(@DrawableRes int id) {
+        if (id == 0) {
+            return null;
+        }
+        Drawable imgOff = getResources().getDrawable(id);
+        imgOff.setBounds(0, 0, imgOff.getMinimumWidth(), imgOff.getMinimumHeight());
+        return imgOff;
     }
 
     private class AssembleTask extends AsyncTask<TableAdapter, Void, Table> {
