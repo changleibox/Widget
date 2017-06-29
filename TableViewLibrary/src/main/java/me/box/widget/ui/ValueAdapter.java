@@ -26,8 +26,6 @@ import me.box.widget.adapter.TableAdapter;
 @SuppressWarnings({"deprecation", "WeakerAccess"})
 public final class ValueAdapter extends RecyclerView.Adapter<TableViewHolder> {
 
-    private final Context mContext;
-
     private TableAdapter mTableAdapter;
     private LayoutInflater mInflater;
 
@@ -37,7 +35,6 @@ public final class ValueAdapter extends RecyclerView.Adapter<TableViewHolder> {
     private OnValueClickListener mValueClickListener;
 
     public ValueAdapter(Context context) {
-        this.mContext = context;
         this.mInflater = LayoutInflater.from(context);
     }
 
@@ -47,7 +44,7 @@ public final class ValueAdapter extends RecyclerView.Adapter<TableViewHolder> {
 
     @Override
     public TableViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        return new TableViewHolder(LayoutInflater.from(mContext).inflate(R.layout.widget_item_table, parent, false));
+        return new TableViewHolder(mInflater.inflate(R.layout.widget_item_table, parent, false));
     }
 
     @Override
