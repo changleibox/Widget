@@ -109,7 +109,8 @@ public class Table {
 
     public static class Row {
 
-        private int row;
+        private int rawRowIndex;
+        private int currentRowIndex;
         private int height;
         private String rowName;
         private String photo;
@@ -163,12 +164,20 @@ public class Table {
             this.height = height;
         }
 
-        public int getRow() {
-            return row;
+        public int getRawRowIndex() {
+            return rawRowIndex;
         }
 
-        public void setRow(int row) {
-            this.row = row;
+        public void setRawRowIndex(int rawRowIndex) {
+            this.rawRowIndex = rawRowIndex;
+        }
+
+        public int getCurrentRowIndex() {
+            return currentRowIndex;
+        }
+
+        public void setCurrentRowIndex(int currentRowIndex) {
+            this.currentRowIndex = currentRowIndex;
         }
     }
 
@@ -176,8 +185,8 @@ public class Table {
 
         private double value;
         private String label;
-        private int column;
-        private int row;
+        private int columnIndex;
+        private int rowIndex;
 
         public Value(double value) {
             this(DEFAULT_FORMAT.format(value), value);
@@ -204,20 +213,20 @@ public class Table {
             this.label = label;
         }
 
-        public int getColumn() {
-            return column;
+        public int getColumnIndex() {
+            return columnIndex;
         }
 
-        public void setColumn(int column) {
-            this.column = column;
+        public void setColumnIndex(int columnIndex) {
+            this.columnIndex = columnIndex;
         }
 
-        public int getRow() {
-            return row;
+        public int getRowIndex() {
+            return rowIndex;
         }
 
-        public void setRow(int row) {
-            this.row = row;
+        public void setRowIndex(int rowIndex) {
+            this.rowIndex = rowIndex;
         }
     }
 }

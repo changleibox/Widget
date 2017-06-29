@@ -169,6 +169,7 @@ public class TableView extends ContentFrameLayout implements View.OnTouchListene
             LinearLayout rowContainer = itemRowName.findViewById(R.id.item_row_container);
 
             final Table.Row row = rows.get(rowIndex);
+            row.setCurrentRowIndex(rowIndex);
 
             View itemView = mInflater.inflate(R.layout.layout_row_name, rowContainer, false);
             TableValueView rowNameView = itemView.findViewById(R.id.tv_name);
@@ -222,12 +223,12 @@ public class TableView extends ContentFrameLayout implements View.OnTouchListene
             final List<Table.Row> rows = table.getRows();
             for (int rowIndex = 0; rowIndex < rows.size(); rowIndex++) {
                 Table.Row row = rows.get(rowIndex);
-                row.setRow(rowIndex);
+                row.setRawRowIndex(rowIndex);
                 List<Table.Value> values = row.getValues();
                 for (int columnIndex = 0; columnIndex < values.size(); columnIndex++) {
                     Table.Value value = values.get(columnIndex);
-                    value.setRow(rowIndex);
-                    value.setColumn(columnIndex);
+                    value.setRowIndex(rowIndex);
+                    value.setColumnIndex(columnIndex);
                 }
             }
             return table;
