@@ -34,7 +34,7 @@ import me.box.widget.adapter.TableAdapter;
  * 表哥控件
  */
 
-@SuppressWarnings({"WeakerAccess", "unused"})
+@SuppressWarnings({"WeakerAccess", "unused", "deprecation"})
 public class TableView extends ContentFrameLayout {
 
     private NestedScrollView mRowScrollView;
@@ -218,7 +218,6 @@ public class TableView extends ContentFrameLayout {
         }
     }
 
-    @SuppressWarnings("deprecation")
     private Drawable getDrawable(@DrawableRes int id) {
         if (id == 0) {
             return null;
