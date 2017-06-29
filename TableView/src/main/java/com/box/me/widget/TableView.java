@@ -182,12 +182,11 @@ public class TableView extends ContentFrameLayout implements View.OnTouchListene
 
             mRowNameContainer.addView(itemRowName, LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
 
-            final int finalRowIndex = rowIndex;
             itemRowName.setOnClickListener(new OnClickListener() {
                 @Override
                 public void onClick(View view) {
                     if (mRowClickListener != null) {
-                        mRowClickListener.onRowClick(TableView.this, finalRowIndex, row);
+                        mRowClickListener.onRowClick(TableView.this, row);
                     }
                 }
             });
@@ -279,6 +278,6 @@ public class TableView extends ContentFrameLayout implements View.OnTouchListene
     }
 
     public interface OnRowClickListener {
-        void onRowClick(TableView view, int rowIndex, Table.Row row);
+        void onRowClick(TableView view, Table.Row row);
     }
 }
