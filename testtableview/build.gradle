@@ -29,7 +29,6 @@ dependencies {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
     testCompile 'junit:junit:4.12'
-    compile project(':TableView')
     compile "org.jetbrains.kotlin:kotlin-stdlib-jre7:$kotlin_version"
     compile 'org.jetbrains.anko:anko-sdk15:0.8.3'
     compile 'org.jetbrains.anko:anko-support-v4:0.8.3'

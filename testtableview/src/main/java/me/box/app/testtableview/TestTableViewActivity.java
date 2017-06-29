@@ -10,13 +10,11 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 
-import com.box.me.widget.entity.Table;
-import com.box.me.widget.ui.TableValueView;
-
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import me.box.app.testtableview.activity.BaseActivity;
+import me.box.app.testtableview.entity.Table;
 import me.box.widget.adapter.BaseTableAdapter;
 import me.box.widget.ui.TableView;
 
@@ -123,7 +121,7 @@ public class TestTableViewActivity extends BaseActivity implements SwipeRefreshL
 
                     rowContainer.removeAllViews();
                     rowContainer.addView(itemView, FrameLayout.LayoutParams.MATCH_PARENT, FrameLayout.LayoutParams.WRAP_CONTENT);
-                    return itemView;
+                    return itemRowName;
                 }
 
                 @Override
