@@ -162,6 +162,7 @@ public class TableView extends ContentFrameLayout implements View.OnTouchListene
 
     private void setRowNames(List<Table.Row> rows, boolean hasAvatar) {
         mRowScrollView.scrollTo(0, 0);
+        new ScrollHelper(mValueView).moveToPosition(0);
         mRowNameContainer.removeAllViews();
         for (int rowIndex = 0; rowIndex < rows.size(); rowIndex++) {
             View itemRowName = mInflater.inflate(R.layout.item_table, mRowNameContainer, false);
@@ -265,7 +266,6 @@ public class TableView extends ContentFrameLayout implements View.OnTouchListene
                 }
 
                 mTableAdapter.setTable(table);
-                new ScrollHelper(mValueView).moveToPosition(0);
 
                 resetPerformClickColumn(0);
             }
