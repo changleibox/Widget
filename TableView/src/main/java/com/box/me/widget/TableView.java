@@ -40,6 +40,10 @@ import java.util.List;
 @SuppressWarnings({"WeakerAccess", "deprecation"})
 public class TableView extends ContentFrameLayout implements View.OnTouchListener {
 
+    public enum SortType {
+        Order, Reverse
+    }
+
     private RecyclerView mValueView;
     private LinearLayout mColumnNameContainer;
     private HorizontalScrollView mHsvContainer;
@@ -66,6 +70,8 @@ public class TableView extends ContentFrameLayout implements View.OnTouchListene
     @Nullable
     private OnRowClickListener mRowClickListener;
 
+    private SortType mDefaultSortType = SortType.Order;
+
     public TableView(@NonNull Context context) {
         this(context, null);
     }
@@ -88,23 +94,34 @@ public class TableView extends ContentFrameLayout implements View.OnTouchListene
         (mAssembleTask = new AssembleTask()).execute(table);
     }
 
+    public void setDefaultSortType(SortType sortType) {
+        this.mDefaultSortType = sortType;
+        resetPerformClickColumn(0);
+    }
+
     public void performClickColumn(int column) {
+        if (mTable == null || mColumnNameContainer.getChildCount() <= column) {
+            return;
+        }
         View view = mColumnNameContainer.getChildAt(column);
         if (mTmpClickColumnView != view) {
             isReverse = false;
             mTmpClickColumnView = view;
         }
+        SortType sortType;
         List<Table.Row> sortedRows;
         if (isReverse) {
+            sortType = mDefaultSortType == SortType.Order ? SortType.Reverse : SortType.Order;
             sortedRows = mTableAdapter.reverse();
         } else {
+            sortType = mDefaultSortType;
             isReverse = true;
-            sortedRows = mTableAdapter.sort(column);
+            sortedRows = mTableAdapter.sort(mDefaultSortType == SortType.Order, column);
         }
         setRowNames(sortedRows, mTable != null && mTable.isHasAvatar());
 
         if (mSortListener != null) {
-            mSortListener.onSort(this, column, sortedRows);
+            mSortListener.onSort(this, column, sortType, sortedRows);
         }
     }
 
@@ -275,7 +292,7 @@ public class TableView extends ContentFrameLayout implements View.OnTouchListene
     }
 
     public interface OnSortListener {
-        void onSort(TableView view, int columnIndex, List<Table.Row> sortedRows);
+        void onSort(TableView view, int columnIndex, SortType sortType, List<Table.Row> sortedRows);
     }
 
     public interface OnRowClickListener {

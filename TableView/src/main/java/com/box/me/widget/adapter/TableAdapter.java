@@ -89,13 +89,13 @@ public class TableAdapter extends RecyclerView.Adapter<TableViewHolder> {
         return Collections.unmodifiableList(mRows);
     }
 
-    public List<Table.Row> sort(final int column) {
+    public List<Table.Row> sort(final boolean isOrder, final int column) {
         return sort(new Comparator<Table.Row>() {
             @Override
             public int compare(Table.Row row1, Table.Row row2) {
                 double value1 = row1.getValues().get(column).getValue();
                 double value2 = row2.getValues().get(column).getValue();
-                return Double.compare(value1, value2);
+                return isOrder ? Double.compare(value1, value2) : Double.compare(value2, value1);
             }
         });
     }
