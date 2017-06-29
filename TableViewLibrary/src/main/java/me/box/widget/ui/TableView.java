@@ -141,7 +141,9 @@ public class TableView extends ContentFrameLayout {
         }
         for (int rowIndex = 0; rowIndex < rows.size(); rowIndex++) {
             View itemView = mAdapter.getRowHeaderView(mInflater, mRowHeaderContainer, rowIndex);
-            mRowHeaderContainer.addView(itemView);
+            ViewGroup.LayoutParams layoutParams = itemView.getLayoutParams();
+            layoutParams.width = ViewGroup.LayoutParams.MATCH_PARENT;
+            mRowHeaderContainer.addView(itemView, layoutParams);
 
             Table.Row row = rows.get(rowIndex);
 
