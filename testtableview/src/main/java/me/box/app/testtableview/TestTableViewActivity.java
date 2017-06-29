@@ -103,6 +103,7 @@ public class TestTableViewActivity extends BaseActivity implements SwipeRefreshL
         protected void onPostExecute(final Table table) {
             mRefreshLayout.setRefreshing(false);
             mTableAdapter.setTable(table);
+            mTableAdapter.notifyDataSetChanged();
         }
     }
 
@@ -112,7 +113,6 @@ public class TestTableViewActivity extends BaseActivity implements SwipeRefreshL
 
         private void setTable(Table table) {
             this.mTable = table;
-            notifyDataSetChanged();
         }
 
         @Override

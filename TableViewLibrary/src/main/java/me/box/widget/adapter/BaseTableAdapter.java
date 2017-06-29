@@ -15,6 +15,7 @@ import java.util.List;
  * tableView的适配器
  */
 
+@SuppressWarnings({"unused", "WeakerAccess"})
 public abstract class BaseTableAdapter implements TableAdapter {
 
     private final List<DataSetObserver> mDataSetObservers = new ArrayList<>();
