@@ -1,8 +1,10 @@
 package com.box.me.widget.adapter;
 
 import android.content.Context;
+import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
+import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewGroup.LayoutParams;
 import android.widget.LinearLayout;
@@ -24,7 +26,7 @@ import java.util.List;
  */
 
 @SuppressWarnings({"deprecation", "WeakerAccess"})
-public class TableAdapter extends RecyclerView.Adapter<TableViewHolder> {
+public final class TableAdapter extends RecyclerView.Adapter<TableViewHolder> {
 
     private final List<Table.Row> mRows = new ArrayList<>();
     private final List<String> mColumnNames = new ArrayList<>();
@@ -32,8 +34,15 @@ public class TableAdapter extends RecyclerView.Adapter<TableViewHolder> {
 
     private Table mTable;
 
+    @Nullable
+    private OnValueClickListener mValueClickListener;
+
     public TableAdapter(Context context) {
         this.mContext = context;
+    }
+
+    public void setOnValueClickListener(OnValueClickListener listener) {
+        this.mValueClickListener = listener;
     }
 
     @Override
@@ -45,15 +54,25 @@ public class TableAdapter extends RecyclerView.Adapter<TableViewHolder> {
     @Override
     public void onBindViewHolder(TableViewHolder holder, int position) {
         holder.rowContainer.removeAllViews();
-        Table.Row row = mRows.get(position);
+        final Table.Row row = mRows.get(position);
         List<Table.Value> values = row.getValues();
-        for (int i = 0; i < mColumnNames.size(); i++) {
+        for (int columnIndex = 0; columnIndex < mColumnNames.size(); columnIndex++) {
             TableValueView valueView = new TableValueView(mContext,
-                    i >= values.size() ? new Table.Value(0.0d) : values.get(i));
+                    columnIndex >= values.size() ? new Table.Value(0.0d) : values.get(columnIndex));
             LayoutParams params = valueView.getLayoutParams();
-            params.width = mTable == null ? 0 : mTable.getColumnWidth(i);
+            params.width = mTable == null ? 0 : mTable.getColumnWidth(columnIndex);
             params.height = LayoutParams.MATCH_PARENT;
             holder.rowContainer.addView(valueView, params);
+
+            if (mValueClickListener != null) {
+                final int finalColumnIndex = columnIndex;
+                valueView.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        mValueClickListener.onValueClick(finalColumnIndex, row);
+                    }
+                });
+            }
         }
 
         LayoutParams rowLayoutParams = holder.rowContainer.getLayoutParams();
@@ -104,6 +123,10 @@ public class TableAdapter extends RecyclerView.Adapter<TableViewHolder> {
         Collections.reverse(mRows);
         notifyDataSetChanged();
         return Collections.unmodifiableList(mRows);
+    }
+
+    public interface OnValueClickListener {
+        void onValueClick(int columnIndex, Table.Row row);
     }
 
 }

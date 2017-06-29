@@ -152,6 +152,17 @@ public class TableView extends ContentFrameLayout implements View.OnTouchListene
         this.mRowClickListener = listener;
     }
 
+    public void setOnValueClickListener(final OnValueClickListener listener) {
+        mTableAdapter.setOnValueClickListener(new TableAdapter.OnValueClickListener() {
+            @Override
+            public void onValueClick(int columnIndex, Table.Row row) {
+                if (listener != null) {
+                    listener.onValueClick(TableView.this, columnIndex, row);
+                }
+            }
+        });
+    }
+
     private void initializationLayout(Context context) {
         mInflater = LayoutInflater.from(context);
         mInflater.inflate(R.layout.layout_table_view, this, true);
@@ -297,5 +308,9 @@ public class TableView extends ContentFrameLayout implements View.OnTouchListene
 
     public interface OnRowClickListener {
         void onRowClick(TableView view, Table.Row row);
+    }
+
+    public interface OnValueClickListener {
+        void onValueClick(TableView view, int columnIndex, Table.Row row);
     }
 }
