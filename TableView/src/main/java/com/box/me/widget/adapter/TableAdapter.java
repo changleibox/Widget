@@ -13,7 +13,7 @@ import android.widget.LinearLayout;
 import com.box.me.widget.R;
 import com.box.me.widget.adapter.viewholder.TableViewHolder;
 import com.box.me.widget.entity.Table;
-import com.box.me.widget.view.TableValueView;
+import com.box.me.widget.ui.TableValueView;
 
 import java.util.ArrayList;
 import java.util.Collections;

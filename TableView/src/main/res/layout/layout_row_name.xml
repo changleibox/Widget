@@ -16,7 +16,7 @@
         android:contentDescription="@string/app_name"
         tools:src="@mipmap/ic_launcher"/>
 
-    <com.box.me.widget.view.TableValueView
+    <com.box.me.widget.ui.TableValueView
         android:id="@+id/tv_name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

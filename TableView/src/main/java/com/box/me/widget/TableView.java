@@ -27,7 +27,7 @@ import com.box.me.widget.adapter.TableAdapter;
 import com.box.me.widget.compat.ViewCompat;
 import com.box.me.widget.entity.Table;
 import com.box.me.widget.helper.ScrollHelper;
-import com.box.me.widget.view.TableValueView;
+import com.box.me.widget.ui.TableValueView;
 
 import java.util.List;
 

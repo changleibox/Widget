@@ -12,7 +12,7 @@ import android.widget.ImageView;
 import com.box.me.widget.R;
 import com.box.me.widget.adapter.viewholder.TableViewHolder;
 import com.box.me.widget.entity.Table;
-import com.box.me.widget.view.TableValueView;
+import com.box.me.widget.ui.TableValueView;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -87,6 +87,7 @@ public class RowNameAdapter extends RecyclerView.Adapter<TableViewHolder> {
         notifyDataSetChanged();
     }
 
+    @SuppressWarnings("WeakerAccess")
     public interface OnItemClickListener {
         void onItemClick(int position, Table.Row row);
     }
