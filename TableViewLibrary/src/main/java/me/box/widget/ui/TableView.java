@@ -15,6 +15,7 @@ import android.support.v4.widget.NestedScrollView;
 import android.support.v7.widget.ContentFrameLayout;
 import android.support.v7.widget.RecyclerView;
 import android.util.AttributeSet;
+import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -319,6 +320,12 @@ public class TableView extends ContentFrameLayout {
 
     private class PreviewAdapter extends BaseTableAdapter {
 
+        private final int mPadding;
+
+        public PreviewAdapter() {
+            mPadding = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 8, getResources().getDisplayMetrics());
+        }
+
         @Override
         public View getColumnHeaderView(LayoutInflater inflater, ViewGroup parent, int columnIndex) {
             return getView(String.format("Column%1$s", columnIndex));
@@ -336,19 +343,21 @@ public class TableView extends ContentFrameLayout {
 
         @Override
         public int getColumnCount() {
-            return 10;
+            return 8;
         }
 
         @Override
         public int getRowCount() {
-            return 10;
+            return 20;
         }
 
         private View getView(CharSequence text) {
             TextView textView = new TextView(getContext());
             textView.setTextAppearance(getContext(), R.style.TextAppearance_AppCompat);
             textView.setText(text);
+            textView.setSingleLine();
             textView.setLayoutParams(new ViewGroup.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
+            textView.setPadding(mPadding, mPadding, mPadding, mPadding);
             return textView;
         }
     }

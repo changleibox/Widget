@@ -43,11 +43,12 @@ public class TestTableViewActivity extends BaseActivity implements SwipeRefreshL
     public void onInitViews(@Nullable Bundle savedInstanceState) {
         mTableView = (TableView) findViewById(R.id.vh_recycler_view);
         mRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.refresh_layout);
+        mTableAdapter = new TestTableAdapter();
     }
 
     @Override
     public void onInitDatas(@Nullable Bundle savedInstanceState) {
-        mTableView.setAdapter(mTableAdapter = new TestTableAdapter());
+        mTableView.setAdapter(mTableAdapter);
         onRefresh();
     }
 
