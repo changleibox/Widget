@@ -12,6 +12,6 @@ class TableViewHolder extends RecyclerView.ViewHolder {
 
     TableViewHolder(View itemView) {
         super(itemView);
-        rowContainer = itemView.findViewById(R.id.item_row_container);
+        rowContainer = itemView.findViewById(R.id.widget_item_row_container);
     }
 }

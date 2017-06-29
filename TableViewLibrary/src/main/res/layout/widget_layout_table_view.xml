@@ -14,12 +14,12 @@
         android:orientation="vertical">
 
         <Space
-            android:id="@+id/spacer"
+            android:id="@+id/widget_spacer"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"/>
 
         <android.support.v4.widget.NestedScrollView
-            android:id="@+id/row_scroll"
+            android:id="@+id/widget_row_scroll"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:fadingEdge="none"
@@ -27,7 +27,7 @@
             android:scrollbars="none">
 
             <LinearLayout
-                android:id="@+id/row_header_container"
+                android:id="@+id/widget_row_header_container"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"/>
@@ -35,7 +35,7 @@
     </LinearLayout>
 
     <HorizontalScrollView
-        android:id="@+id/content_container"
+        android:id="@+id/widget_content_container"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:fadingEdge="none"
@@ -48,13 +48,13 @@
             android:orientation="vertical">
 
             <LinearLayout
-                android:id="@+id/column_header_container"
+                android:id="@+id/widget_column_header_container"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"/>
 
             <android.support.v7.widget.RecyclerView
-                android:id="@+id/rv_value"
+                android:id="@+id/widget_rv_value"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:fadingEdge="none"

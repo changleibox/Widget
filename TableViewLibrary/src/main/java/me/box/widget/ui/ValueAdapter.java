@@ -7,7 +7,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewGroup.LayoutParams;
-import android.widget.LinearLayout;
 
 import java.util.List;
 
@@ -58,7 +57,7 @@ public final class ValueAdapter extends RecyclerView.Adapter<TableViewHolder> {
 
             LayoutParams params = valueView.getLayoutParams();
             params.width = mTable == null ? 0 : mTable.getColumnWidth(columnIndex);
-            params.height = LayoutParams.MATCH_PARENT;
+            params.height = row.getHeight();
             holder.rowContainer.addView(valueView, params);
 
             final Table.Value value = columnIndex >= values.size() ? new Table.Value() : values.get(columnIndex);
@@ -69,16 +68,6 @@ public final class ValueAdapter extends RecyclerView.Adapter<TableViewHolder> {
                 }
             });
         }
-
-        LayoutParams rowLayoutParams = holder.rowContainer.getLayoutParams();
-        if (rowLayoutParams instanceof LinearLayout.LayoutParams) {
-            ((LinearLayout.LayoutParams) rowLayoutParams).weight = 1;
-        }
-        holder.rowContainer.setLayoutParams(rowLayoutParams);
-
-        LayoutParams itemLayoutParams = holder.itemView.getLayoutParams();
-        itemLayoutParams.height = row.getHeight();
-        holder.itemView.setLayoutParams(itemLayoutParams);
     }
 
     @Override

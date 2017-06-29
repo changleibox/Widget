@@ -105,12 +105,12 @@ public class TableView extends ContentFrameLayout {
 
         mInflater.inflate(R.layout.widget_layout_table_view, this, true);
 
-        mRowScrollView = findViewById(R.id.row_scroll);
-        mContentScrollView = findViewById(R.id.content_container);
-        mRowHeaderContainer = findViewById(R.id.row_header_container);
-        mColumnHeaderContainer = findViewById(R.id.column_header_container);
-        mValueContainer = findViewById(R.id.rv_value);
-        mSpacer = findViewById(R.id.spacer);
+        mRowScrollView = findViewById(R.id.widget_row_scroll);
+        mContentScrollView = findViewById(R.id.widget_content_container);
+        mRowHeaderContainer = findViewById(R.id.widget_row_header_container);
+        mColumnHeaderContainer = findViewById(R.id.widget_column_header_container);
+        mValueContainer = findViewById(R.id.widget_rv_value);
+        mSpacer = findViewById(R.id.widget_spacer);
 
         mScrollHelper = new ScrollHelper(mValueContainer);
 
