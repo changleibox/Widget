@@ -103,7 +103,9 @@ public final class TableAdapter extends RecyclerView.Adapter<TableViewHolder> {
     }
 
     public List<Table.Row> sort(Comparator<Table.Row> comparator) {
-        Collections.sort(mRows, comparator);
+        if (!mRows.isEmpty()) {
+            Collections.sort(mRows, comparator);
+        }
         if (Looper.getMainLooper() == Looper.myLooper()) {
             notifyDataSetChanged();
         }
@@ -114,8 +116,13 @@ public final class TableAdapter extends RecyclerView.Adapter<TableViewHolder> {
         return sort(new Comparator<Table.Row>() {
             @Override
             public int compare(Table.Row row1, Table.Row row2) {
-                double value1 = row1.getValues().get(column).getValue();
-                double value2 = row2.getValues().get(column).getValue();
+                List<Table.Value> values1 = row1.getValues();
+                List<Table.Value> values2 = row2.getValues();
+                if (values1.size() <= column || values2.size() <= column) {
+                    return 0;
+                }
+                double value1 = values1.get(column).getValue();
+                double value2 = values2.get(column).getValue();
                 return isOrder ? Double.compare(value1, value2) : Double.compare(value2, value1);
             }
         });
