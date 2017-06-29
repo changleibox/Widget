@@ -1,3 +1,7 @@
+/*
+ * Copyright © 2017 CHANGLEI. All rights reserved.
+ */
+
 package me.box.widget.ui;
 
 import android.content.Context;
@@ -72,7 +76,7 @@ public final class ValueAdapter extends RecyclerView.Adapter<TableViewHolder> {
 
     @Override
     public int getItemCount() {
-        return mTableAdapter == null || mTable == null ? 0 : mTableAdapter.getRowCount();
+        return mTableAdapter == null || mTable == null ? 0 : mTable.getRows().size();
     }
 
     public void setTableAdapter(TableAdapter tableAdapter) {
