@@ -1,6 +1,8 @@
 package me.box.widget.ui;
 
 import android.content.Context;
+import android.content.res.TypedArray;
+import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.support.annotation.Nullable;
 import android.support.v4.widget.NestedScrollView;
@@ -44,6 +46,9 @@ public class TableView extends ContentFrameLayout {
     private TableAdapter mAdapter;
     private ValueAdapter mValueAdapter;
 
+    private Drawable mColumnDivider;
+    private Drawable mRowDivider;
+
     private AssembleTask mAssembleTask;
 
     @Nullable
@@ -61,6 +66,13 @@ public class TableView extends ContentFrameLayout {
 
     public TableView(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
+
+        TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.RecyclerView, defStyleAttr, 0);
+
+        mColumnDivider = a.getDrawable(R.styleable.TableView_columnHeaderDivider);
+        mRowDivider = a.getDrawable(R.styleable.TableView_rowHeaderDivider);
+
+        a.recycle();
 
         initializationLayout(context);
     }
@@ -103,7 +115,14 @@ public class TableView extends ContentFrameLayout {
     private void initializationLayout(Context context) {
         mInflater = LayoutInflater.from(context);
 
-        mInflater.inflate(R.layout.widget_layout_table_view, this, true);
+        LinearLayout contentView = (LinearLayout) mInflater.inflate(R.layout.widget_layout_table_view, this, false);
+        addView(contentView);
+
+        contentView.setDividerDrawable(mRowDivider);
+        LinearLayout columnContainer = findViewById(R.id.widget_column_container);
+        LinearLayout rowContainer = findViewById(R.id.widget_row_container);
+        columnContainer.setDividerDrawable(mColumnDivider);
+        rowContainer.setDividerDrawable(mColumnDivider);
 
         mRowScrollView = findViewById(R.id.widget_row_scroll);
         mContentScrollView = findViewById(R.id.widget_content_container);

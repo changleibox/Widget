@@ -9,6 +9,7 @@
               tools:ignore="UselessParent">
 
     <LinearLayout
+        android:id="@+id/widget_row_container"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="vertical">
@@ -43,9 +44,11 @@
         android:scrollbars="none">
 
         <LinearLayout
+            android:id="@+id/widget_column_container"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            android:showDividers="middle">
 
             <LinearLayout
                 android:id="@+id/widget_column_header_container"
