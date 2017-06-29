@@ -1,13 +1,16 @@
+/*
+ * Copyright © 2017 CHANGLEI. All rights reserved.
+ */
+
 package me.box.app.testtableview;
 
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-
-import org.jetbrains.annotations.NotNull;
 
 import me.box.app.testtableview.activity.BaseActivity;
 
@@ -61,7 +64,7 @@ public class MainActivity extends BaseActivity implements SwipeRefreshLayout.OnR
 
     @Nullable
     @Override
-    public View getLayout(@Nullable Bundle savedInstanceState, @NotNull LayoutInflater inflater, @NotNull ViewGroup parent) {
+    public View getLayout(@Nullable Bundle savedInstanceState, @NonNull LayoutInflater inflater, @NonNull ViewGroup parent) {
         return inflater.inflate(R.layout.activity_main, parent, false);
     }
 

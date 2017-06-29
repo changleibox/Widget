@@ -1,7 +1,13 @@
+/*
+ * Copyright © 2017 CHANGLEI. All rights reserved.
+ */
+
 package me.box.app.testtableview;
 
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
@@ -9,9 +15,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
-
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import me.box.app.testtableview.activity.BaseActivity;
 import me.box.app.testtableview.entity.Table;
@@ -52,7 +55,7 @@ public class TestTableViewActivity extends BaseActivity implements SwipeRefreshL
 
     @Nullable
     @Override
-    public View getLayout(@Nullable Bundle savedInstanceState, @NotNull LayoutInflater inflater, @NotNull ViewGroup parent) {
+    public View getLayout(@Nullable Bundle savedInstanceState, @NonNull LayoutInflater inflater, @NonNull ViewGroup parent) {
         return inflater.inflate(R.layout.activity_test_table_view, parent, false);
     }
 
@@ -96,10 +99,10 @@ public class TestTableViewActivity extends BaseActivity implements SwipeRefreshL
         @Override
         protected void onPostExecute(final Table table) {
             mRefreshLayout.setRefreshing(false);
-            mTableView.setAdapter(new BaseTableAdapter(TestTableViewActivity.this) {
+            mTableView.setAdapter(new BaseTableAdapter() {
                 @Override
                 public View getColumnHeaderView(LayoutInflater inflater, ViewGroup parent, int columnIndex) {
-                    TableValueView valueView = new TableValueView(getContext());
+                    TableValueView valueView = new TableValueView(TestTableViewActivity.this);
                     valueView.setText(table.getColumnNames().get(columnIndex));
                     valueView.setMinHeight((int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 48, getResources().getDisplayMetrics()));
                     return valueView;
