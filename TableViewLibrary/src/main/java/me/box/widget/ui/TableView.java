@@ -1,7 +1,12 @@
+/*
+ * Copyright © 2017 CHANGLEI. All rights reserved.
+ */
+
 package me.box.widget.ui;
 
 import android.content.Context;
 import android.content.res.TypedArray;
+import android.database.DataSetObserver;
 import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.support.annotation.DrawableRes;
@@ -51,6 +56,7 @@ public class TableView extends ContentFrameLayout {
     private Drawable mRowDivider;
 
     private AssembleTask mAssembleTask;
+    private AdapterDataObserver mDataObserver;
 
     @Nullable
     private OnColumnClickListener mColumnClicListener;
@@ -65,7 +71,6 @@ public class TableView extends ContentFrameLayout {
         this(context, attrs, 0);
     }
 
-    @SuppressWarnings("deprecation")
     public TableView(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
 
@@ -96,7 +101,16 @@ public class TableView extends ContentFrameLayout {
     }
 
     public void setAdapter(TableAdapter adapter) {
+        if (mAdapter != null) {
+            mAdapter.unregisterDataSetObserver(mDataObserver);
+        }
         this.mAdapter = adapter;
+
+        if (adapter != null) {
+            adapter.unregisterDataSetObserver(mDataObserver);
+            adapter.registerDataSetObserver(mDataObserver);
+        }
+
         this.mValueAdapter.setTableAdapter(adapter);
         if (mAssembleTask != null) {
             mAssembleTask.cancel(true);
@@ -158,6 +172,8 @@ public class TableView extends ContentFrameLayout {
         });
 
         mValueContainer.setAdapter(mValueAdapter = new ValueAdapter(context));
+
+        mDataObserver = new AdapterDataObserver();
     }
 
     private void setRowNames(List<Table.Row> rows) {
@@ -202,6 +218,7 @@ public class TableView extends ContentFrameLayout {
         }
     }
 
+    @SuppressWarnings("deprecation")
     private Drawable getDrawable(@DrawableRes int id) {
         if (id == 0) {
             return null;
@@ -209,6 +226,18 @@ public class TableView extends ContentFrameLayout {
         Drawable imgOff = getResources().getDrawable(id);
         imgOff.setBounds(0, 0, imgOff.getMinimumWidth(), imgOff.getMinimumHeight());
         return imgOff;
+    }
+
+    private class AdapterDataObserver extends DataSetObserver {
+        @Override
+        public void onChanged() {
+            setAdapter(mAdapter);
+        }
+
+        @Override
+        public void onInvalidated() {
+            setAdapter(mAdapter);
+        }
     }
 
     private class AssembleTask extends AsyncTask<TableAdapter, Void, Table> {

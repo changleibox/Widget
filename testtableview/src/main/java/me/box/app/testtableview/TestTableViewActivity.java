@@ -37,6 +37,8 @@ public class TestTableViewActivity extends BaseActivity implements SwipeRefreshL
 
     private TestSortTask mTestSortTask;
 
+    private TestTableAdapter mTableAdapter;
+
     @Override
     public void onInitViews(@Nullable Bundle savedInstanceState) {
         mTableView = (TableView) findViewById(R.id.vh_recycler_view);
@@ -45,6 +47,7 @@ public class TestTableViewActivity extends BaseActivity implements SwipeRefreshL
 
     @Override
     public void onInitDatas(@Nullable Bundle savedInstanceState) {
+        mTableView.setAdapter(mTableAdapter = new TestTableAdapter());
         onRefresh();
     }
 
@@ -99,47 +102,58 @@ public class TestTableViewActivity extends BaseActivity implements SwipeRefreshL
         @Override
         protected void onPostExecute(final Table table) {
             mRefreshLayout.setRefreshing(false);
-            mTableView.setAdapter(new BaseTableAdapter() {
-                @Override
-                public View getColumnHeaderView(LayoutInflater inflater, ViewGroup parent, int columnIndex) {
-                    TableValueView valueView = new TableValueView(TestTableViewActivity.this);
-                    valueView.setText(table.getColumnNames().get(columnIndex));
-                    valueView.setMinHeight((int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 48, getResources().getDisplayMetrics()));
-                    return valueView;
-                }
-
-                @Override
-                public View getRowHeaderView(LayoutInflater inflater, ViewGroup parent, int rowIndex) {
-                    final Table.Row row = table.getRows().get(rowIndex);
-
-                    View itemView = inflater.inflate(R.layout.layout_row_name, parent, false);
-                    TableValueView rowNameView = itemView.findViewById(R.id.tv_name);
-                    ImageView ivAvatar = itemView.findViewById(R.id.iv_avatar);
-
-                    ivAvatar.setVisibility(table.isHasAvatar() ? View.VISIBLE : View.GONE);
-                    ivAvatar.setImageResource(R.mipmap.ic_launcher_round);
-                    rowNameView.setText(row.getRowName());
-                    return itemView;
-                }
-
-                @Override
-                public View getValueView(LayoutInflater inflater, ViewGroup parent, int columnIndex, int rowIndex) {
-                    View itemView = inflater.inflate(R.layout.item_table_value, parent, false);
-                    TextView tvValue = itemView.findViewById(R.id.tv_value);
-                    tvValue.setText(table.getRows().get(rowIndex).getValues().get(columnIndex).getLabel());
-                    return itemView;
-                }
-
-                @Override
-                public int getColumnCount() {
-                    return table.getColumnNames().size();
-                }
-
-                @Override
-                public int getRowCount() {
-                    return table.getRows().size();
-                }
-            });
+            mTableAdapter.setTable(table);
         }
     }
+
+    private class TestTableAdapter extends BaseTableAdapter {
+
+        private Table mTable;
+
+        private void setTable(Table table) {
+            this.mTable = table;
+            notifyDataSetChanged();
+        }
+
+        @Override
+        public View getColumnHeaderView(LayoutInflater inflater, ViewGroup parent, int columnIndex) {
+            TableValueView valueView = new TableValueView(TestTableViewActivity.this);
+            valueView.setText(mTable.getColumnNames().get(columnIndex));
+            valueView.setMinHeight((int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 48, getResources().getDisplayMetrics()));
+            return valueView;
+        }
+
+        @Override
+        public View getRowHeaderView(LayoutInflater inflater, ViewGroup parent, int rowIndex) {
+            final Table.Row row = mTable.getRows().get(rowIndex);
+
+            View itemView = inflater.inflate(R.layout.layout_row_name, parent, false);
+            TableValueView rowNameView = itemView.findViewById(R.id.tv_name);
+            ImageView ivAvatar = itemView.findViewById(R.id.iv_avatar);
+
+            ivAvatar.setVisibility(mTable.isHasAvatar() ? View.VISIBLE : View.GONE);
+            ivAvatar.setImageResource(R.mipmap.ic_launcher_round);
+            rowNameView.setText(row.getRowName());
+            return itemView;
+        }
+
+        @Override
+        public View getValueView(LayoutInflater inflater, ViewGroup parent, int columnIndex, int rowIndex) {
+            View itemView = inflater.inflate(R.layout.item_table_value, parent, false);
+            TextView tvValue = itemView.findViewById(R.id.tv_value);
+            tvValue.setText(mTable.getRows().get(rowIndex).getValues().get(columnIndex).getLabel());
+            return itemView;
+        }
+
+        @Override
+        public int getColumnCount() {
+            return mTable == null ? 0 : mTable.getColumnNames().size();
+        }
+
+        @Override
+        public int getRowCount() {
+            return mTable == null ? 0 : mTable.getRows().size();
+        }
+    }
+
 }
