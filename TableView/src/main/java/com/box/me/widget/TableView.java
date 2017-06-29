@@ -54,6 +54,7 @@ public class TableView extends ContentFrameLayout implements View.OnTouchListene
     private TableAdapter mTableAdapter;
 
     private AssembleTask mAssembleTask;
+    private SortTask mSortTask;
 
     private boolean isReverse;
 
@@ -100,7 +101,12 @@ public class TableView extends ContentFrameLayout implements View.OnTouchListene
     }
 
     public void performClickColumn(int column) {
-        if (mTable == null || mColumnNameContainer.getChildCount() <= column) {
+        if (mSortTask != null) {
+            mSortTask.cancel(true);
+            mSortTask = null;
+        }
+        int childCount = mColumnNameContainer.getChildCount();
+        if (mTable == null || childCount <= column) {
             return;
         }
         View view = mColumnNameContainer.getChildAt(column);
@@ -108,21 +114,22 @@ public class TableView extends ContentFrameLayout implements View.OnTouchListene
             isReverse = false;
             mTmpClickColumnView = view;
         }
-        SortType sortType;
-        List<Table.Row> sortedRows;
-        if (isReverse) {
-            sortType = mDefaultSortType == SortType.Order ? SortType.Reverse : SortType.Order;
-            sortedRows = mTableAdapter.reverse();
-        } else {
-            sortType = mDefaultSortType;
-            isReverse = true;
-            sortedRows = mTableAdapter.sort(mDefaultSortType == SortType.Order, column);
-        }
-        setRowNames(sortedRows, mTable != null && mTable.isHasAvatar());
-
-        if (mSortListener != null) {
-            mSortListener.onSort(this, column, sortType, sortedRows);
-        }
+        // SortType sortType;
+        // List<Table.Row> sortedRows;
+        // if (isReverse) {
+        //     sortType = mDefaultSortType == SortType.Order ? SortType.Reverse : SortType.Order;
+        //     sortedRows = mTableAdapter.reverse();
+        // } else {
+        //     sortType = mDefaultSortType;
+        //     isReverse = true;
+        //     sortedRows = mTableAdapter.sort(mDefaultSortType == SortType.Order, column);
+        // }
+        // setRowNames(sortedRows, mTable != null && mTable.isHasAvatar());
+        //
+        // if (mSortListener != null) {
+        //     mSortListener.onSort(this, column, sortType, sortedRows);
+        // }
+        (mSortTask = new SortTask(column)).execute();
     }
 
     public void resetPerformClickColumn(int column) {
@@ -197,11 +204,6 @@ public class TableView extends ContentFrameLayout implements View.OnTouchListene
             LinearLayout rowContainer = itemRowName.findViewById(R.id.item_row_container);
 
             final Table.Row row = rows.get(rowIndex);
-            row.setCurrentRowIndex(rowIndex);
-            List<Table.Value> values = row.getValues();
-            for (Table.Value value : values) {
-                value.setCurrentRowIndex(rowIndex);
-            }
 
             View itemView = mInflater.inflate(R.layout.layout_row_name, rowContainer, false);
             TableValueView rowNameView = itemView.findViewById(R.id.tv_name);
@@ -304,6 +306,49 @@ public class TableView extends ContentFrameLayout implements View.OnTouchListene
             }
         }
 
+    }
+
+    private class SortTask extends AsyncTask<Void, Void, List<Table.Row>> {
+
+        private SortType mSortType;
+        private final int column;
+
+        public SortTask(int column) {
+            this.column = column;
+        }
+
+        @Override
+        protected List<Table.Row> doInBackground(Void... voids) {
+            List<Table.Row> sortedRows;
+            if (isReverse) {
+                mSortType = mDefaultSortType == SortType.Order ? SortType.Reverse : SortType.Order;
+                sortedRows = mTableAdapter.reverse();
+            } else {
+                mSortType = mDefaultSortType;
+                isReverse = true;
+                sortedRows = mTableAdapter.sort(mDefaultSortType == SortType.Order, column);
+            }
+            for (int rowIndex = 0; rowIndex < sortedRows.size(); rowIndex++) {
+                Table.Row row = sortedRows.get(rowIndex);
+                row.setCurrentRowIndex(rowIndex);
+                List<Table.Value> values = row.getValues();
+                for (Table.Value value : values) {
+                    value.setCurrentRowIndex(rowIndex);
+                }
+            }
+            return sortedRows;
+        }
+
+        @Override
+        protected void onPostExecute(List<Table.Row> rows) {
+            mTableAdapter.notifyDataSetChanged();
+
+            setRowNames(rows, mTable != null && mTable.isHasAvatar());
+
+            if (mSortListener != null) {
+                mSortListener.onSort(TableView.this, column, mSortType, rows);
+            }
+        }
     }
 
     public interface OnSortListener {

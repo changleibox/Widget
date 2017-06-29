@@ -1,6 +1,7 @@
 package com.box.me.widget.adapter;
 
 import android.content.Context;
+import android.os.Looper;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -103,7 +104,9 @@ public final class TableAdapter extends RecyclerView.Adapter<TableViewHolder> {
 
     public List<Table.Row> sort(Comparator<Table.Row> comparator) {
         Collections.sort(mRows, comparator);
-        notifyDataSetChanged();
+        if (Looper.getMainLooper() == Looper.myLooper()) {
+            notifyDataSetChanged();
+        }
         return Collections.unmodifiableList(mRows);
     }
 
@@ -120,7 +123,9 @@ public final class TableAdapter extends RecyclerView.Adapter<TableViewHolder> {
 
     public List<Table.Row> reverse() {
         Collections.reverse(mRows);
-        notifyDataSetChanged();
+        if (Looper.getMainLooper() == Looper.myLooper()) {
+            notifyDataSetChanged();
+        }
         return Collections.unmodifiableList(mRows);
     }
 
