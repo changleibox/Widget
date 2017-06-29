@@ -8,6 +8,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -120,7 +121,10 @@ public class TestTableViewActivity extends BaseActivity implements SwipeRefreshL
 
                 @Override
                 public View getValueView(LayoutInflater inflater, ViewGroup parent, int columnIndex, int rowIndex) {
-                    return new TableValueView(parent.getContext(), table.getRows().get(rowIndex).getValues().get(columnIndex));
+                    View itemView = inflater.inflate(R.layout.item_table_value, parent, false);
+                    TextView tvValue = itemView.findViewById(R.id.tv_value);
+                    tvValue.setText(table.getRows().get(rowIndex).getValues().get(columnIndex).getLabel());
+                    return itemView;
                 }
 
                 @Override
