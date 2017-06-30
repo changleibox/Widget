@@ -30,4 +30,6 @@ public interface TableAdapter {
     int getColumnCount();
 
     int getRowCount();
+
+    boolean isEmpty();
 }

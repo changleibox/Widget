@@ -102,7 +102,7 @@ public class TableView extends ContentFrameLayout {
         mSpacer.setLayoutParams(layoutParams);
     }
 
-    public void setAdapter(TableAdapter adapter) {
+    public void setAdapter(@Nullable TableAdapter adapter) {
         if (mAdapter != null && mDataSetObserver != null) {
             mAdapter.unregisterDataSetObserver(mDataSetObserver);
         }

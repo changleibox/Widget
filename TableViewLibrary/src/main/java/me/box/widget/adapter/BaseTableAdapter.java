@@ -39,4 +39,8 @@ public abstract class BaseTableAdapter implements TableAdapter {
         mDataSetObservable.unregisterObserver(var1);
     }
 
+    @Override
+    public boolean isEmpty() {
+        return getColumnCount() == 0 || getRowCount() == 0;
+    }
 }
