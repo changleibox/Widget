@@ -20,7 +20,7 @@ import java.util.List;
 @SuppressWarnings({"WeakerAccess", "unused"})
 public class Table {
 
-    private static final DecimalFormat DEFAULT_FORMAT = new DecimalFormat("###,##0");
+    private static final DecimalFormat DEFAULT_FORMAT = new DecimalFormat("###,##0.00");
 
     private final List<String> columnNames = new ArrayList<>();
     private final List<Row> rows = new ArrayList<>();

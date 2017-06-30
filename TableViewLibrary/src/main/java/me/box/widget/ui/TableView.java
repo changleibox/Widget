@@ -67,6 +67,8 @@ public class TableView extends ContentFrameLayout {
     @Nullable
     private OnRowClickListener mRowClickListener;
 
+    private boolean isInvalidDataSetChanged;
+
     public TableView(Context context) {
         this(context, null);
     }
@@ -103,6 +105,7 @@ public class TableView extends ContentFrameLayout {
     }
 
     public void setAdapter(@Nullable TableAdapter adapter) {
+        isInvalidDataSetChanged = true;
         if (mAdapter != null && mDataSetObserver != null) {
             mAdapter.unregisterDataSetObserver(mDataSetObserver);
         }
@@ -113,11 +116,8 @@ public class TableView extends ContentFrameLayout {
         }
 
         this.mValueAdapter.setTableAdapter(adapter);
-        if (mAssembleTask != null) {
-            mAssembleTask.cancel(true);
-            mAssembleTask = null;
-        }
-        (mAssembleTask = new AssembleTask()).execute(adapter);
+
+        refreshDatas();
     }
 
     public void setOnColumnClickListener(OnColumnClickListener listener) {
@@ -175,9 +175,21 @@ public class TableView extends ContentFrameLayout {
         mValueContainer.setAdapter(mValueAdapter = new ValueAdapter(context));
     }
 
+    private void refreshDatas() {
+        if (mAssembleTask != null) {
+            mAssembleTask.cancel(true);
+            mAssembleTask = null;
+        }
+        if (mAdapter != null) {
+            (mAssembleTask = new AssembleTask()).execute(mAdapter);
+        }
+    }
+
     private void setRowNames(List<Table.Row> rows) {
-        mScrollHelper.moveToPosition(0);
-        mRowScrollView.scrollTo(0, 0);
+        if (isInvalidDataSetChanged) {
+            mScrollHelper.moveToPosition(0);
+            mRowScrollView.scrollTo(0, 0);
+        }
         mRowHeaderContainer.removeAllViews();
         if (mAdapter == null || mAdapter.isEmpty()) {
             return;
@@ -201,7 +213,9 @@ public class TableView extends ContentFrameLayout {
     }
 
     private void setColumnNames(int columnCount) {
-        mContentScrollView.scrollTo(0, 0);
+        if (isInvalidDataSetChanged) {
+            mContentScrollView.scrollTo(0, 0);
+        }
         mColumnHeaderContainer.removeAllViews();
         if (mAdapter == null || mAdapter.isEmpty()) {
             return;
@@ -233,12 +247,14 @@ public class TableView extends ContentFrameLayout {
     private class AdapterDataSetObserver extends DataSetObserver {
         @Override
         public void onChanged() {
-            setAdapter(mAdapter);
+            isInvalidDataSetChanged = false;
+            refreshDatas();
         }
 
         @Override
         public void onInvalidated() {
-            setAdapter(mAdapter);
+            isInvalidDataSetChanged = true;
+            refreshDatas();
         }
     }
 

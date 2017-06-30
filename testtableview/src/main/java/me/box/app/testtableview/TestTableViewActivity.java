@@ -30,7 +30,7 @@ import me.box.widget.ui.TableView;
 public class TestTableViewActivity extends BaseActivity implements SwipeRefreshLayout.OnRefreshListener {
 
     private static final int ROW_COUNT = 15;
-    private static final int COLUMNS_COUNT = 100;
+    private static final int COLUMNS_COUNT = 11;
 
     private TableView mTableView;
     private SwipeRefreshLayout mRefreshLayout;
