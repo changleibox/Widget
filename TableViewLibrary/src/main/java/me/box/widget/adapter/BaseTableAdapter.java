@@ -43,4 +43,14 @@ public abstract class BaseTableAdapter implements TableAdapter {
     public boolean isEmpty() {
         return getColumnCount() == 0 || getRowCount() == 0;
     }
+
+    @Override
+    public boolean areAllItemsEnabled() {
+        return true;
+    }
+
+    @Override
+    public boolean isEnabled(int columnIndex, int rowIndex) {
+        return true;
+    }
 }

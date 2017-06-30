@@ -17,9 +17,9 @@ import android.view.ViewGroup;
 
 public interface TableAdapter {
 
-    void registerDataSetObserver(DataSetObserver var1);
+    void registerDataSetObserver(DataSetObserver observer);
 
-    void unregisterDataSetObserver(DataSetObserver var1);
+    void unregisterDataSetObserver(DataSetObserver observer);
 
     View getColumnHeaderView(LayoutInflater inflater, ViewGroup parent, int columnIndex);
 
@@ -32,4 +32,8 @@ public interface TableAdapter {
     int getRowCount();
 
     boolean isEmpty();
+
+    boolean areAllItemsEnabled();
+
+    boolean isEnabled(int columnIndex, int rowIndex);
 }
