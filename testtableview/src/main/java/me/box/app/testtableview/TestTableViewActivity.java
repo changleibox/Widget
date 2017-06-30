@@ -16,6 +16,8 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import java.util.List;
+
 import me.box.app.testtableview.activity.BaseActivity;
 import me.box.app.testtableview.entity.Table;
 import me.box.widget.adapter.BaseTableAdapter;
@@ -140,9 +142,17 @@ public class TestTableViewActivity extends BaseActivity implements SwipeRefreshL
 
         @Override
         public View getValueView(LayoutInflater inflater, ViewGroup parent, int columnIndex, int rowIndex) {
+            List<Table.Row> rows = mTable.getRows();
+            if (rows.size() <= rowIndex) {
+                return null;
+            }
+            List<Table.Value> values = rows.get(rowIndex).getValues();
+            if (values.size() <= columnIndex) {
+                return null;
+            }
             View itemView = inflater.inflate(R.layout.item_table_value, parent, false);
             TextView tvValue = itemView.findViewById(R.id.tv_value);
-            tvValue.setText(mTable.getRows().get(rowIndex).getValues().get(columnIndex).getLabel());
+            tvValue.setText(values.get(columnIndex).getLabel());
             return itemView;
         }
 

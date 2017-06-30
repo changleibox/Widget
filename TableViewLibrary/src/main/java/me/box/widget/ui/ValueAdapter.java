@@ -57,8 +57,14 @@ public final class ValueAdapter extends RecyclerView.Adapter<TableViewHolder> {
         parent.removeAllViews();
         for (int columnIndex = 0; columnIndex < mAdapter.getColumnCount(); columnIndex++) {
             View valueView = mAdapter.getValueView(mInflater, parent, columnIndex, position);
-
-            LayoutParams params = valueView.getLayoutParams();
+            LayoutParams params;
+            if (valueView == null) {
+                params = new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
+                valueView = new View(mInflater.getContext());
+                valueView.setEnabled(false);
+            } else {
+                params = valueView.getLayoutParams();
+            }
             params.width = mTable == null ? 0 : mTable.getColumnWidth(columnIndex);
             params.height = row.getHeight();
             parent.addView(valueView, params);

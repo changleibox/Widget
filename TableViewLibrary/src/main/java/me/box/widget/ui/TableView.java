@@ -196,7 +196,14 @@ public class TableView extends ContentFrameLayout {
         }
         for (int rowIndex = 0; rowIndex < rows.size(); rowIndex++) {
             View itemView = mAdapter.getRowHeaderView(mInflater, mRowHeaderContainer, rowIndex);
-            ViewGroup.LayoutParams layoutParams = itemView.getLayoutParams();
+            ViewGroup.LayoutParams layoutParams;
+            if (itemView == null) {
+                layoutParams = new ViewGroup.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
+                itemView = new View(getContext());
+                itemView.setEnabled(false);
+            } else {
+                layoutParams = itemView.getLayoutParams();
+            }
             layoutParams.width = ViewGroup.LayoutParams.MATCH_PARENT;
             mRowHeaderContainer.addView(itemView, layoutParams);
 
@@ -222,6 +229,11 @@ public class TableView extends ContentFrameLayout {
         }
         for (int columnIndex = 0; columnIndex < columnCount; columnIndex++) {
             View itemView = mAdapter.getColumnHeaderView(mInflater, mColumnHeaderContainer, columnIndex);
+
+            if (itemView == null) {
+                itemView = new View(getContext());
+                itemView.setEnabled(false);
+            }
             mColumnHeaderContainer.addView(itemView);
 
             itemView.setEnabled(itemView.isEnabled() && mAdapter.areAllItemsEnabled() && mAdapter.isColumnEnabled(columnIndex));
