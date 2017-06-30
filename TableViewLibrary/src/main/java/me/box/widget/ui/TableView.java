@@ -179,7 +179,7 @@ public class TableView extends ContentFrameLayout {
         mScrollHelper.moveToPosition(0);
         mRowScrollView.scrollTo(0, 0);
         mRowHeaderContainer.removeAllViews();
-        if (mAdapter == null) {
+        if (mAdapter == null || mAdapter.isEmpty()) {
             return;
         }
         for (int rowIndex = 0; rowIndex < rows.size(); rowIndex++) {
@@ -187,6 +187,8 @@ public class TableView extends ContentFrameLayout {
             ViewGroup.LayoutParams layoutParams = itemView.getLayoutParams();
             layoutParams.width = ViewGroup.LayoutParams.MATCH_PARENT;
             mRowHeaderContainer.addView(itemView, layoutParams);
+
+            itemView.setEnabled(itemView.isEnabled() && mAdapter.areAllItemsEnabled() && mAdapter.isRowEnabled(rowIndex));
 
             Table.Row row = rows.get(rowIndex);
 
@@ -201,12 +203,14 @@ public class TableView extends ContentFrameLayout {
     private void setColumnNames(int columnCount) {
         mContentScrollView.scrollTo(0, 0);
         mColumnHeaderContainer.removeAllViews();
-        if (mAdapter == null) {
+        if (mAdapter == null || mAdapter.isEmpty()) {
             return;
         }
         for (int columnIndex = 0; columnIndex < columnCount; columnIndex++) {
             View itemView = mAdapter.getColumnHeaderView(mInflater, mColumnHeaderContainer, columnIndex);
             mColumnHeaderContainer.addView(itemView);
+
+            itemView.setEnabled(itemView.isEnabled() && mAdapter.areAllItemsEnabled() && mAdapter.isColumnEnabled(columnIndex));
 
             int finalColumnIndex = columnIndex;
             itemView.setOnClickListener(view -> {

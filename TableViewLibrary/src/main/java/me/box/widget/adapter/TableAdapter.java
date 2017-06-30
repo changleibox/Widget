@@ -35,5 +35,9 @@ public interface TableAdapter {
 
     boolean areAllItemsEnabled();
 
-    boolean isEnabled(int columnIndex, int rowIndex);
+    boolean isValueEnabled(int columnIndex, int rowIndex);
+
+    boolean isColumnEnabled(int columnIndex);
+
+    boolean isRowEnabled(int rowIndex);
 }

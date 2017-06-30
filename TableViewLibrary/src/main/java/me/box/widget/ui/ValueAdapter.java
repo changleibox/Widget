@@ -26,7 +26,7 @@ import me.box.widget.adapter.TableAdapter;
 @SuppressWarnings({"deprecation", "WeakerAccess"})
 public final class ValueAdapter extends RecyclerView.Adapter<TableViewHolder> {
 
-    private TableAdapter mTableAdapter;
+    private TableAdapter mAdapter;
     private LayoutInflater mInflater;
 
     private Table mTable;
@@ -55,13 +55,16 @@ public final class ValueAdapter extends RecyclerView.Adapter<TableViewHolder> {
         ViewGroup parent = (ViewGroup) holder.itemView;
 
         parent.removeAllViews();
-        for (int columnIndex = 0; columnIndex < mTableAdapter.getColumnCount(); columnIndex++) {
-            View valueView = mTableAdapter.getValueView(mInflater, parent, columnIndex, position);
+        for (int columnIndex = 0; columnIndex < mAdapter.getColumnCount(); columnIndex++) {
+            View valueView = mAdapter.getValueView(mInflater, parent, columnIndex, position);
 
             LayoutParams params = valueView.getLayoutParams();
             params.width = mTable == null ? 0 : mTable.getColumnWidth(columnIndex);
             params.height = row.getHeight();
             parent.addView(valueView, params);
+
+            valueView.setEnabled(valueView.isEnabled() && mAdapter.areAllItemsEnabled()
+                    && mAdapter.isValueEnabled(columnIndex, position));
 
             final Table.Value value = columnIndex >= values.size() ? new Table.Value() : values.get(columnIndex);
 
@@ -75,11 +78,11 @@ public final class ValueAdapter extends RecyclerView.Adapter<TableViewHolder> {
 
     @Override
     public int getItemCount() {
-        return mTableAdapter == null || mTable == null ? 0 : mTable.getRows().size();
+        return mAdapter == null || mTable == null ? 0 : mTable.getRows().size();
     }
 
     public void setTableAdapter(TableAdapter tableAdapter) {
-        this.mTableAdapter = tableAdapter;
+        this.mAdapter = tableAdapter;
         notifyDataSetChanged();
     }
 

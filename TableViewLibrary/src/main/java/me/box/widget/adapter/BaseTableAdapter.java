@@ -50,7 +50,17 @@ public abstract class BaseTableAdapter implements TableAdapter {
     }
 
     @Override
-    public boolean isEnabled(int columnIndex, int rowIndex) {
+    public boolean isValueEnabled(int columnIndex, int rowIndex) {
+        return true;
+    }
+
+    @Override
+    public boolean isColumnEnabled(int columnIndex) {
+        return true;
+    }
+
+    @Override
+    public boolean isRowEnabled(int rowIndex) {
         return true;
     }
 }
