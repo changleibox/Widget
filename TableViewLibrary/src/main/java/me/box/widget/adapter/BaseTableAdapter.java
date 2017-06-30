@@ -4,10 +4,8 @@
 
 package me.box.widget.adapter;
 
+import android.database.DataSetObservable;
 import android.database.DataSetObserver;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Created by box on 2017/6/29.
@@ -18,38 +16,27 @@ import java.util.List;
 @SuppressWarnings({"unused", "WeakerAccess"})
 public abstract class BaseTableAdapter implements TableAdapter {
 
-    private final List<DataSetObserver> mDataSetObservers = new ArrayList<>();
+    private final DataSetObservable mDataSetObservable = new DataSetObservable();
 
     public BaseTableAdapter() {
     }
 
     public void notifyDataSetChanged() {
-        for (int i = 0; i < mDataSetObservers.size(); i++) {
-            DataSetObserver dataSetObserver = mDataSetObservers.get(i);
-            if (dataSetObserver == null) {
-                continue;
-            }
-            dataSetObserver.onChanged();
-        }
+        mDataSetObservable.notifyChanged();
     }
 
     public void notifyDataSetInvalidated() {
-        for (int i = 0; i < mDataSetObservers.size(); i++) {
-            DataSetObserver dataSetObserver = mDataSetObservers.get(i);
-            if (dataSetObserver == null) {
-                continue;
-            }
-            dataSetObserver.onInvalidated();
-        }
+        mDataSetObservable.notifyInvalidated();
     }
 
     @Override
     public void registerDataSetObserver(DataSetObserver var1) {
-        mDataSetObservers.add(var1);
+        mDataSetObservable.registerObserver(var1);
     }
 
     @Override
     public void unregisterDataSetObserver(DataSetObserver var1) {
-        mDataSetObservers.remove(var1);
+        mDataSetObservable.unregisterObserver(var1);
     }
+
 }

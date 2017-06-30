@@ -59,7 +59,8 @@ public class TableView extends ContentFrameLayout {
     private Drawable mRowDivider;
 
     private AssembleTask mAssembleTask;
-    private AdapterDataObserver mDataObserver;
+    @Nullable
+    private AdapterDataSetObserver mDataSetObserver;
 
     @Nullable
     private OnColumnClickListener mColumnClicListener;
@@ -102,14 +103,13 @@ public class TableView extends ContentFrameLayout {
     }
 
     public void setAdapter(TableAdapter adapter) {
-        if (mAdapter != null) {
-            mAdapter.unregisterDataSetObserver(mDataObserver);
+        if (mAdapter != null && mDataSetObserver != null) {
+            mAdapter.unregisterDataSetObserver(mDataSetObserver);
         }
         this.mAdapter = adapter;
-
-        if (adapter != null) {
-            adapter.unregisterDataSetObserver(mDataObserver);
-            adapter.registerDataSetObserver(mDataObserver);
+        if (mAdapter != null) {
+            mDataSetObserver = new AdapterDataSetObserver();
+            mAdapter.registerDataSetObserver(mDataSetObserver);
         }
 
         this.mValueAdapter.setTableAdapter(adapter);
@@ -173,8 +173,6 @@ public class TableView extends ContentFrameLayout {
         });
 
         mValueContainer.setAdapter(mValueAdapter = new ValueAdapter(context));
-
-        mDataObserver = new AdapterDataObserver();
     }
 
     private void setRowNames(List<Table.Row> rows) {
@@ -228,7 +226,7 @@ public class TableView extends ContentFrameLayout {
         return imgOff;
     }
 
-    private class AdapterDataObserver extends DataSetObserver {
+    private class AdapterDataSetObserver extends DataSetObserver {
         @Override
         public void onChanged() {
             setAdapter(mAdapter);
