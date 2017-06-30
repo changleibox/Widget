@@ -161,9 +161,7 @@ public class TableView extends ContentFrameLayout {
 
             @Override
             public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
-                if (recyclerView.getScrollState() != RecyclerView.SCROLL_STATE_IDLE) {
-                    mRowScrollView.scrollBy(dx, dy);
-                }
+                mRowScrollView.scrollBy(dx, dy);
             }
         });
 
