@@ -67,7 +67,7 @@ public class TableView extends ContentFrameLayout {
     @Nullable
     private OnRowClickListener mRowClickListener;
 
-    private boolean isInvalidDataSetChanged;
+    private boolean isInvalidated;
 
     public TableView(Context context) {
         this(context, null);
@@ -105,7 +105,7 @@ public class TableView extends ContentFrameLayout {
     }
 
     public void setAdapter(@Nullable TableAdapter adapter) {
-        isInvalidDataSetChanged = true;
+        isInvalidated = true;
         if (mAdapter != null && mDataSetObserver != null) {
             mAdapter.unregisterDataSetObserver(mDataSetObserver);
         }
@@ -186,7 +186,7 @@ public class TableView extends ContentFrameLayout {
     }
 
     private void setRowNames(List<Table.Row> rows) {
-        if (isInvalidDataSetChanged) {
+        if (isInvalidated) {
             mScrollHelper.moveToPosition(0);
             mRowScrollView.scrollTo(0, 0);
         }
@@ -220,7 +220,7 @@ public class TableView extends ContentFrameLayout {
     }
 
     private void setColumnNames(int columnCount) {
-        if (isInvalidDataSetChanged) {
+        if (isInvalidated) {
             mContentScrollView.scrollTo(0, 0);
         }
         mColumnHeaderContainer.removeAllViews();
@@ -259,13 +259,13 @@ public class TableView extends ContentFrameLayout {
     private class AdapterDataSetObserver extends DataSetObserver {
         @Override
         public void onChanged() {
-            isInvalidDataSetChanged = false;
+            isInvalidated = false;
             refreshDatas();
         }
 
         @Override
         public void onInvalidated() {
-            isInvalidDataSetChanged = true;
+            isInvalidated = true;
             refreshDatas();
         }
     }
