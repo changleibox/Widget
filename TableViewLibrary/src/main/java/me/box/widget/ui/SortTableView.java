@@ -9,7 +9,6 @@ import android.os.AsyncTask;
 import android.support.annotation.Nullable;
 import android.util.AttributeSet;
 
-import java.util.Collections;
 import java.util.List;
 
 import me.box.widget.impl.SortAdapter;
@@ -73,7 +72,7 @@ public class SortTableView extends TableView {
         this.mSortListener = listener;
     }
 
-    private class SortTask extends AsyncTask<Table, Void, List<Table.Row>> {
+    private class SortTask extends AsyncTask<Void, Void, Void> {
 
         private SortType mSortType;
         private final int column;
@@ -83,45 +82,37 @@ public class SortTableView extends TableView {
         }
 
         @Override
-        protected List<Table.Row> doInBackground(Table... tables) {
-            Table table = tables[0];
-            if (mSortAdapter == null || table == null) {
+        protected Void doInBackground(Void... voids) {
+            if (mSortAdapter == null) {
                 return null;
             }
-            int[] sortedRowIndexes;
+            List<?> sortedRows;
             if (isReverse) {
                 mSortType = mDefaultSortType == SortType.Order ? SortType.Reverse : SortType.Order;
-                sortedRowIndexes = mSortAdapter.reverse();
+                mSortAdapter.reverse();
             } else {
                 mSortType = mDefaultSortType;
                 isReverse = true;
-                sortedRowIndexes = mSortAdapter.sort(mDefaultSortType == SortType.Order, column);
+                mSortAdapter.sort(mDefaultSortType == SortType.Order, column);
             }
-            if (sortedRowIndexes == null) {
-                return null;
-            }
-            List<Table.Row> rows = table.getRows();
-            for (int i = 0; i < rows.size(); i++) {
-                rows.get(i).setCurrentRowIndex(sortedRowIndexes[i]);
-            }
-            Collections.sort(rows, (row1, row2) ->
-                    Double.compare(row1.getCurrentRowIndex(), row2.getCurrentRowIndex()));
-            return Collections.unmodifiableList(rows);
+            return null;
         }
 
         @Override
-        protected void onPostExecute(List<Table.Row> rows) {
-            if (rows == null || mSortAdapter == null) {
+        protected void onPostExecute(Void aVoid) {
+            if (mSortAdapter == null) {
                 return;
             }
 
+            mSortAdapter.notifyDataSetChanged();
+
             if (mSortListener != null) {
-                mSortListener.onSort(SortTableView.this, column, mSortType, rows);
+                mSortListener.onSort(SortTableView.this, column, mSortType);
             }
         }
     }
 
     public interface OnSortListener {
-        void onSort(TableView view, int columnIndex, SortType sortType, List<?> sortedRows);
+        void onSort(TableView view, int columnIndex, SortType sortType);
     }
 }

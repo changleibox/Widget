@@ -4,7 +4,9 @@
 
 package me.box.widget.impl;
 
-import me.box.widget.adapter.TableAdapter;
+import android.support.annotation.WorkerThread;
+
+import me.box.widget.adapter.ArrayAdapter;
 
 /**
  * Created by Box on 2017/7/2.
@@ -12,9 +14,11 @@ import me.box.widget.adapter.TableAdapter;
  * 排序
  */
 
-public interface SortAdapter extends TableAdapter {
+public abstract class SortAdapter<Column, Row, Value> extends ArrayAdapter<Column, Row, Value> {
 
-    int[] sort(final boolean isOrder, final int column);
+    @WorkerThread
+    public abstract void sort(final boolean isOrder, final int column);
 
-    int[] reverse();
+    @WorkerThread
+    public abstract void reverse();
 }

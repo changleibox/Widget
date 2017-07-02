@@ -6,6 +6,7 @@ package me.box.widget.adapter;
 
 import android.database.DataSetObserver;
 import android.support.annotation.IntRange;
+import android.support.annotation.MainThread;
 import android.support.annotation.NonNull;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -23,8 +24,10 @@ public interface TableAdapter {
 
     void unregisterDataSetObserver(@NonNull DataSetObserver observer);
 
+    @MainThread
     void notifyDataSetChanged();
 
+    @MainThread
     void notifyDataSetInvalidated();
 
     View getColumnHeaderView(@NonNull LayoutInflater inflater, @NonNull ViewGroup parent, int columnIndex);

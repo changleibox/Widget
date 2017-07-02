@@ -23,7 +23,6 @@ import java.util.List;
 
 import me.box.app.testtableview.activity.BaseActivity;
 import me.box.app.testtableview.entity.TableData;
-import me.box.widget.adapter.ArrayAdapter;
 import me.box.widget.impl.SortAdapter;
 import me.box.widget.ui.SortTableView;
 
@@ -115,7 +114,7 @@ public class TestTableViewActivity extends BaseActivity implements SwipeRefreshL
         }
     }
 
-    private class TestAdapter extends ArrayAdapter<String, TableData.Row, TableData.Value> implements SortAdapter {
+    private class TestAdapter extends SortAdapter<String, TableData.Row, TableData.Value> {
 
         private boolean hasAvatar;
         private List<TableData.Row> mRows;
@@ -167,9 +166,9 @@ public class TestTableViewActivity extends BaseActivity implements SwipeRefreshL
         }
 
         @Override
-        public int[] sort(final boolean isOrder, final int column) {
+        public void sort(final boolean isOrder, final int column) {
             if (mRows == null || mRows.isEmpty()) {
-                return null;
+                return;
             }
             int[] sortedRowIndex = new int[mRows.size()];
             for (int i = 0; i < mRows.size(); i++) {
@@ -189,25 +188,22 @@ public class TestTableViewActivity extends BaseActivity implements SwipeRefreshL
                     return isOrder ? Double.compare(value1, value2) : Double.compare(value2, value1);
                 }
             });
-            sortedRowIndex = new int[mRows.size()];
+            setRows(mRows);
             for (int i = 0; i < mRows.size(); i++) {
-                sortedRowIndex[i] = mRows.get(i).getCurrentRowIndex();
+                setValuesToRow(i, mRows.get(i).getValues());
             }
-            System.out.println(Arrays.toString(sortedRowIndex));
-            return sortedRowIndex;
         }
 
         @Override
-        public int[] reverse() {
+        public void reverse() {
             if (mRows == null || mRows.isEmpty()) {
-                return null;
+                return;
             }
             Collections.reverse(mRows);
-            int[] sortedRowIndex = new int[mRows.size()];
+            setRows(mRows);
             for (int i = 0; i < mRows.size(); i++) {
-                sortedRowIndex[i] = mRows.get(i).getCurrentRowIndex();
+                setValuesToRow(i, mRows.get(i).getValues());
             }
-            return sortedRowIndex;
         }
     }
 
