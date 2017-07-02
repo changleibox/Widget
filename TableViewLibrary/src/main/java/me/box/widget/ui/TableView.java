@@ -183,6 +183,20 @@ public class TableView extends ContentFrameLayout {
         }
     }
 
+    void refreshRowNames() {
+        if (mAssembleTask != null) {
+            setRowNames(mAssembleTask.table.getRows());
+        }
+    }
+
+    void refreshColumnNames() {
+        setColumnNames(mAdapter != null ? mAdapter.getColumnCount() : 0);
+    }
+
+    void refreshValues() {
+        mValueAdapter.notifyDataSetChanged();
+    }
+
     void setRowNames(List<Table.Row> rows) {
         if (isInvalidated) {
             mScrollHelper.moveToPosition(0);

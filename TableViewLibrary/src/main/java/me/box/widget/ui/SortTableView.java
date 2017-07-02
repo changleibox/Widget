@@ -9,8 +9,6 @@ import android.os.AsyncTask;
 import android.support.annotation.Nullable;
 import android.util.AttributeSet;
 
-import java.util.List;
-
 import me.box.widget.impl.SortAdapter;
 
 /**
@@ -98,7 +96,6 @@ public class SortTableView extends TableView {
             if (mSortAdapter == null) {
                 return null;
             }
-            List<?> sortedRows;
             if (isReverse) {
                 mSortType = mDefaultSortType == SortType.Order ? SortType.Reverse : SortType.Order;
                 mSortAdapter.reverse();
@@ -116,7 +113,8 @@ public class SortTableView extends TableView {
                 return;
             }
 
-            mSortAdapter.notifyDataSetChanged();
+            refreshRowNames();
+            refreshValues();
 
             if (mSortListener != null) {
                 mSortListener.onSort(SortTableView.this, column, mSortType);
