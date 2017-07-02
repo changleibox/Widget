@@ -85,10 +85,10 @@ public class SortTableView extends TableView {
     private class SortTask extends AsyncTask<Void, Void, Void> {
 
         private SortType mSortType;
-        private final int column;
+        private final int columnIndex;
 
-        public SortTask(int column) {
-            this.column = column;
+        public SortTask(int columnIndex) {
+            this.columnIndex = columnIndex;
         }
 
         @Override
@@ -102,7 +102,7 @@ public class SortTableView extends TableView {
             } else {
                 mSortType = mDefaultSortType;
                 isReverse = true;
-                mSortAdapter.sort(mDefaultSortType == SortType.Order, column);
+                mSortAdapter.sort(mDefaultSortType == SortType.Order, columnIndex);
             }
             return null;
         }
@@ -117,7 +117,7 @@ public class SortTableView extends TableView {
             refreshValues();
 
             if (mSortListener != null) {
-                mSortListener.onSort(SortTableView.this, column, mSortType);
+                mSortListener.onSort(SortTableView.this, columnIndex, mSortType);
             }
         }
     }
