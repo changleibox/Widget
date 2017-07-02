@@ -140,6 +140,13 @@ public class TableView extends ContentFrameLayout {
         refreshDatas();
     }
 
+    public void performClickColumn(int columnIndex) {
+        View childAt = mColumnHeaderContainer.getChildAt(columnIndex);
+        if (childAt != null) {
+            childAt.performClick();
+        }
+    }
+
     public void setOnColumnClickListener(OnColumnClickListener listener) {
         this.mColumnClicListener = listener;
     }
@@ -150,10 +157,20 @@ public class TableView extends ContentFrameLayout {
 
     public void setOnValueClickListener(final OnValueClickListener listener) {
         mValueAdapter.setOnValueClickListener((Table.Value value) -> {
+            onValueClick(TableView.this, value);
             if (listener != null) {
                 listener.onValueClick(TableView.this, value);
             }
         });
+    }
+
+    void onColumnClick(TableView view, int columnIndex) {
+    }
+
+    void onRowClick(TableView view, Table.Row row) {
+    }
+
+    void onValueClick(TableView view, Table.Value value) {
     }
 
     private void initializationLayout(Context context) {
@@ -235,6 +252,7 @@ public class TableView extends ContentFrameLayout {
 
             Table.Row row = rows.get(rowIndex);
 
+            onRowClick(this, row);
             itemView.setOnClickListener(view -> {
                 if (mRowClickListener != null) {
                     mRowClickListener.onRowClick(this, row);
@@ -262,6 +280,7 @@ public class TableView extends ContentFrameLayout {
 
             itemView.setEnabled(itemView.isEnabled() && mAdapter.areAllItemsEnabled() && mAdapter.isColumnEnabled(columnIndex));
 
+            onColumnClick(this, columnIndex);
             int finalColumnIndex = columnIndex;
             itemView.setOnClickListener(view -> {
                 if (mColumnClicListener != null) {
