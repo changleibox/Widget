@@ -22,7 +22,7 @@ import java.util.Comparator;
 import java.util.List;
 
 import me.box.app.testtableview.activity.BaseActivity;
-import me.box.app.testtableview.entity.Table;
+import me.box.app.testtableview.entity.TableData;
 import me.box.widget.adapter.ArrayAdapter;
 import me.box.widget.impl.SortAdapter;
 import me.box.widget.ui.SortTableView;
@@ -87,20 +87,20 @@ public class TestTableViewActivity extends BaseActivity implements SwipeRefreshL
         (mTestSortTask = new TestSortTask()).execute();
     }
 
-    private class TestSortTask extends AsyncTask<Void, Void, Table> {
+    private class TestSortTask extends AsyncTask<Void, Void, TableData> {
 
         @Override
-        protected Table doInBackground(Void... voids) {
-            Table table = new Table();
+        protected TableData doInBackground(Void... voids) {
+            TableData table = new TableData();
             table.setHasAvatar(true);
             for (int column = 0; column < COLUMNS_COUNT; column++) {
                 table.addColumnName(String.format("Column%1$s", column));
             }
             for (int row = 0; row < ROW_COUNT; row++) {
-                Table.Row item = new Table.Row("Row" + row);
+                TableData.Row item = new TableData.Row("Row" + row);
                 item.setCurrentRowIndex(row);
                 for (int column = 0; column < COLUMNS_COUNT; column++) {
-                    item.addValue(new Table.Value(Math.random()));
+                    item.addValue(new TableData.Value(Math.random()));
                 }
                 table.addRow(item);
             }
@@ -108,19 +108,19 @@ public class TestTableViewActivity extends BaseActivity implements SwipeRefreshL
         }
 
         @Override
-        protected void onPostExecute(final Table table) {
+        protected void onPostExecute(final TableData table) {
             mRefreshLayout.setRefreshing(false);
             mTableAdapter.setTable(table);
             mTableAdapter.notifyDataSetChanged();
         }
     }
 
-    private class TestAdapter extends ArrayAdapter<String, Table.Row, Table.Value> implements SortAdapter {
+    private class TestAdapter extends ArrayAdapter<String, TableData.Row, TableData.Value> implements SortAdapter {
 
         private boolean hasAvatar;
-        private List<Table.Row> mRows;
+        private List<TableData.Row> mRows;
 
-        private void setTable(Table table) {
+        private void setTable(TableData table) {
             if (table == null) {
                 return;
             }
@@ -144,7 +144,7 @@ public class TestTableViewActivity extends BaseActivity implements SwipeRefreshL
         }
 
         @Override
-        protected View getRowHeaderView(LayoutInflater inflater, ViewGroup parent, Table.Row row, int rowIndex) {
+        protected View getRowHeaderView(LayoutInflater inflater, ViewGroup parent, TableData.Row row, int rowIndex) {
             View itemView = inflater.inflate(R.layout.layout_row_name, parent, false);
             TableValueView rowNameView = itemView.findViewById(R.id.tv_name);
             ImageView ivAvatar = itemView.findViewById(R.id.iv_avatar);
@@ -156,7 +156,7 @@ public class TestTableViewActivity extends BaseActivity implements SwipeRefreshL
         }
 
         @Override
-        protected View getValueView(LayoutInflater inflater, ViewGroup parent, @Nullable Table.Value value, int columnIndex, int rowIndex) {
+        protected View getValueView(LayoutInflater inflater, ViewGroup parent, @Nullable TableData.Value value, int columnIndex, int rowIndex) {
             if (value == null) {
                 return null;
             }
@@ -176,11 +176,11 @@ public class TestTableViewActivity extends BaseActivity implements SwipeRefreshL
                 sortedRowIndex[i] = mRows.get(i).getCurrentRowIndex();
             }
             System.out.println(Arrays.toString(sortedRowIndex));
-            Collections.sort(mRows, new Comparator<Table.Row>() {
+            Collections.sort(mRows, new Comparator<TableData.Row>() {
                 @Override
-                public int compare(Table.Row row1, Table.Row row2) {
-                    List<Table.Value> values1 = row1.getValues();
-                    List<Table.Value> values2 = row2.getValues();
+                public int compare(TableData.Row row1, TableData.Row row2) {
+                    List<TableData.Value> values1 = row1.getValues();
+                    List<TableData.Value> values2 = row2.getValues();
                     if (values1.size() <= column || values2.size() <= column) {
                         return 0;
                     }

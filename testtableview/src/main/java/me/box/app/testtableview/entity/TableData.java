@@ -18,7 +18,7 @@ import java.util.List;
  */
 
 @SuppressWarnings({"WeakerAccess", "unused"})
-public class Table {
+public class TableData {
 
     private static final DecimalFormat DEFAULT_FORMAT = new DecimalFormat("###,##0.00");
 
@@ -27,10 +27,10 @@ public class Table {
     private final SparseIntArray columnWidthArray = new SparseIntArray();
     private boolean hasAvatar;
 
-    public Table() {
+    public TableData() {
     }
 
-    public Table(Table table) {
+    public TableData(TableData table) {
         if (table == null) {
             columnNames.clear();
             rows.clear();
@@ -40,11 +40,11 @@ public class Table {
         this.setRows(table.rows);
     }
 
-    public Table(List<String> columnNames) {
+    public TableData(List<String> columnNames) {
         this(columnNames, null);
     }
 
-    public Table(List<String> columnNames, List<? extends Row> rows) {
+    public TableData(List<String> columnNames, List<? extends Row> rows) {
         setColumnNames(columnNames);
         setRows(rows);
     }
