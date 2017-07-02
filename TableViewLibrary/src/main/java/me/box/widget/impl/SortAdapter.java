@@ -17,7 +17,7 @@ import me.box.widget.adapter.ArrayAdapter;
 public abstract class SortAdapter<Column, Row, Value> extends ArrayAdapter<Column, Row, Value> {
 
     @WorkerThread
-    public abstract void sort(final boolean isOrder, final int column);
+    public abstract void sort(final boolean isOrder, final int columnIndex);
 
     @WorkerThread
     public abstract void reverse();

@@ -165,7 +165,7 @@ public class TestTableViewActivity extends BaseActivity implements SwipeRefreshL
         }
 
         @Override
-        public void sort(final boolean isOrder, final int column) {
+        public void sort(final boolean isOrder, final int columnIndex) {
             if (mRows == null || mRows.isEmpty()) {
                 return;
             }
@@ -174,11 +174,11 @@ public class TestTableViewActivity extends BaseActivity implements SwipeRefreshL
                 public int compare(TableData.Row row1, TableData.Row row2) {
                     List<TableData.Value> values1 = row1.getValues();
                     List<TableData.Value> values2 = row2.getValues();
-                    if (values1.size() <= column || values2.size() <= column) {
+                    if (values1.size() <= columnIndex || values2.size() <= columnIndex) {
                         return 0;
                     }
-                    double value1 = values1.get(column).getValue();
-                    double value2 = values2.get(column).getValue();
+                    double value1 = values1.get(columnIndex).getValue();
+                    double value2 = values2.get(columnIndex).getValue();
                     return isOrder ? Double.compare(value1, value2) : Double.compare(value2, value1);
                 }
             });
