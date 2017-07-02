@@ -16,6 +16,7 @@ import android.support.v4.widget.NestedScrollView;
 import android.support.v7.widget.ContentFrameLayout;
 import android.support.v7.widget.RecyclerView;
 import android.util.AttributeSet;
+import android.util.DisplayMetrics;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -40,6 +41,9 @@ import me.box.widget.adapter.TableAdapter;
 
 @SuppressWarnings({"WeakerAccess", "unused", "deprecation"})
 public class TableView extends ContentFrameLayout {
+
+    private static final int DEFAULT_SPACE_WIDTH = 40;
+    private static final int DEFAULT_PREVIEW_PADDING = 8;
 
     private NestedScrollView mRowScrollView;
     private HorizontalScrollView mContentScrollView;
@@ -70,6 +74,8 @@ public class TableView extends ContentFrameLayout {
 
     private boolean isInvalidated;
 
+    private final DisplayMetrics mMetrics;
+
     public TableView(Context context) {
         this(context, null);
     }
@@ -80,6 +86,8 @@ public class TableView extends ContentFrameLayout {
 
     public TableView(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
+
+        mMetrics = getResources().getDisplayMetrics();
 
         TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.TableView, defStyleAttr, 0);
 
@@ -100,8 +108,19 @@ public class TableView extends ContentFrameLayout {
     protected void onLayout(boolean changed, int left, int top, int right, int bottom) {
         super.onLayout(changed, left, top, right, bottom);
 
+        int defaultSpaceSize = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, DEFAULT_SPACE_WIDTH, mMetrics);
+
         ViewGroup.LayoutParams layoutParams = mSpacer.getLayoutParams();
-        layoutParams.height = mColumnHeaderContainer.getHeight();
+        if (mAdapter == null || mAdapter.isRowEmpty()) {
+            layoutParams.width = defaultSpaceSize;
+        } else {
+            layoutParams.width = mRowScrollView.getWidth();
+        }
+        if (mAdapter == null || mAdapter.isColumnEmpty()) {
+            layoutParams.height = defaultSpaceSize;
+        } else {
+            layoutParams.height = mColumnHeaderContainer.getHeight();
+        }
         mSpacer.setLayoutParams(layoutParams);
     }
 
@@ -162,6 +181,9 @@ public class TableView extends ContentFrameLayout {
 
             @Override
             public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+                if (mAdapter == null || mAdapter.isColumnEmpty()) {
+                    return;
+                }
                 if (recyclerView.getScrollState() != RecyclerView.SCROLL_STATE_IDLE) {
                     mRowScrollView.scrollBy(dx, dy);
                 }
@@ -169,6 +191,9 @@ public class TableView extends ContentFrameLayout {
         });
 
         mRowScrollView.setOnTouchListener((view, motionEvent) -> {
+            if (mAdapter == null || mAdapter.isColumnEmpty()) {
+                return view.onTouchEvent(motionEvent);
+            }
             mValueContainer.onTouchEvent(motionEvent);
             return true;
         });
@@ -192,7 +217,7 @@ public class TableView extends ContentFrameLayout {
             mRowScrollView.scrollTo(0, 0);
         }
         mRowHeaderContainer.removeAllViews();
-        if (mAdapter == null || mAdapter.isEmpty()) {
+        if (mAdapter == null || rows == null || rows.isEmpty()) {
             return;
         }
         for (int rowIndex = 0; rowIndex < rows.size(); rowIndex++) {
@@ -225,7 +250,7 @@ public class TableView extends ContentFrameLayout {
             mContentScrollView.scrollTo(0, 0);
         }
         mColumnHeaderContainer.removeAllViews();
-        if (mAdapter == null || mAdapter.isEmpty()) {
+        if (mAdapter == null || columnCount == 0) {
             return;
         }
         for (int columnIndex = 0; columnIndex < columnCount; columnIndex++) {
@@ -354,7 +379,7 @@ public class TableView extends ContentFrameLayout {
         private final int mPadding;
 
         public PreviewAdapter() {
-            mPadding = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 8, getResources().getDisplayMetrics());
+            mPadding = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, DEFAULT_PREVIEW_PADDING, mMetrics);
         }
 
         @NonNull

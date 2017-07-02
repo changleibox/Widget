@@ -42,7 +42,17 @@ public abstract class BaseAdapter implements TableAdapter {
 
     @Override
     public boolean isEmpty() {
-        return getColumnCount() == 0 || getRowCount() == 0;
+        return isColumnEmpty() && isRowEmpty();
+    }
+
+    @Override
+    public boolean isColumnEmpty() {
+        return getColumnCount() == 0;
+    }
+
+    @Override
+    public boolean isRowEmpty() {
+        return getRowCount() == 0;
     }
 
     @Override

@@ -37,6 +37,10 @@ public interface TableAdapter {
 
     boolean isEmpty();
 
+    boolean isColumnEmpty();
+
+    boolean isRowEmpty();
+
     boolean areAllItemsEnabled();
 
     boolean isValueEnabled(int columnIndex, int rowIndex);

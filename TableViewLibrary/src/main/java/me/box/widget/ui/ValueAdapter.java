@@ -84,7 +84,11 @@ public final class ValueAdapter extends RecyclerView.Adapter<TableViewHolder> {
 
     @Override
     public int getItemCount() {
-        return mAdapter == null || mTable == null ? 0 : mTable.getRows().size();
+        return mTable == null
+                || mAdapter == null
+                || mAdapter.isEmpty()
+                || mAdapter.isRowEmpty()
+                || mAdapter.isColumnEmpty() ? 0 : mTable.getRows().size();
     }
 
     public void setTableAdapter(TableAdapter tableAdapter) {
