@@ -8,6 +8,7 @@ import android.util.SparseIntArray;
 import android.view.ViewGroup.LayoutParams;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -43,7 +44,7 @@ public class Table {
     }
 
     public List<Row> getRows() {
-        return new ArrayList<>(rows);
+        return Collections.unmodifiableList(rows);
     }
 
     void setRows(List<? extends Row> rows) {
@@ -92,7 +93,7 @@ public class Table {
         }
 
         public List<Value> getValues() {
-            return new ArrayList<>(values);
+            return Collections.unmodifiableList(values);
         }
 
         void setValues(List<? extends Value> values) {
