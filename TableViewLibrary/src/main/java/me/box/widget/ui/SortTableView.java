@@ -64,6 +64,12 @@ public class SortTableView extends TableView {
         (mSortTask = new SortTask(columnIndex)).execute();
     }
 
+    @Override
+    void onLayoutComplete() {
+        isReverse = false;
+        performClickColumn(0);
+    }
+
     public void setAdapter(@Nullable SortAdapter adapter) {
         this.mSortAdapter = adapter;
         super.setAdapter(adapter);

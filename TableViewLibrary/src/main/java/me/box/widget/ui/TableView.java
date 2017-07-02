@@ -170,6 +170,9 @@ public class TableView extends ContentFrameLayout {
     void onValueClick(TableView view, Table.Value value) {
     }
 
+    void onLayoutComplete() {
+    }
+
     void refreshDatas() {
         if (mAssembleTask != null) {
             mAssembleTask.cancel(true);
@@ -380,6 +383,8 @@ public class TableView extends ContentFrameLayout {
                 }
 
                 mValueAdapter.setTable(table);
+
+                onLayoutComplete();
             }
         }
 
