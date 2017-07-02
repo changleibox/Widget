@@ -183,6 +183,70 @@ public class TableView extends ContentFrameLayout {
         }
     }
 
+    void setRowNames(List<Table.Row> rows) {
+        if (isInvalidated) {
+            mScrollHelper.moveToPosition(0);
+            mRowScrollView.scrollTo(0, 0);
+        }
+        mRowHeaderContainer.removeAllViews();
+        if (mAdapter == null || rows == null || rows.isEmpty()) {
+            return;
+        }
+        for (int rowIndex = 0; rowIndex < rows.size(); rowIndex++) {
+            View itemView = mAdapter.getRowHeaderView(mInflater, mRowHeaderContainer, rowIndex);
+            ViewGroup.LayoutParams layoutParams;
+            if (itemView == null) {
+                layoutParams = new ViewGroup.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
+                itemView = new View(getContext());
+                itemView.setEnabled(false);
+            } else {
+                layoutParams = itemView.getLayoutParams();
+            }
+            layoutParams.width = ViewGroup.LayoutParams.MATCH_PARENT;
+            mRowHeaderContainer.addView(itemView, layoutParams);
+
+            itemView.setEnabled(itemView.isEnabled() && mAdapter.areAllItemsEnabled() && mAdapter.isRowEnabled(rowIndex));
+
+            Table.Row row = rows.get(rowIndex);
+
+            itemView.setOnClickListener(view -> {
+                onRowClick(this, row);
+                if (mRowClickListener != null) {
+                    mRowClickListener.onRowClick(this, row);
+                }
+            });
+        }
+    }
+
+    void setColumnNames(int columnCount) {
+        if (isInvalidated) {
+            mContentScrollView.scrollTo(0, 0);
+        }
+        mColumnHeaderContainer.removeAllViews();
+        if (mAdapter == null || columnCount == 0) {
+            return;
+        }
+        for (int columnIndex = 0; columnIndex < columnCount; columnIndex++) {
+            View itemView = mAdapter.getColumnHeaderView(mInflater, mColumnHeaderContainer, columnIndex);
+
+            if (itemView == null) {
+                itemView = new View(getContext());
+                itemView.setEnabled(false);
+            }
+            mColumnHeaderContainer.addView(itemView);
+
+            itemView.setEnabled(itemView.isEnabled() && mAdapter.areAllItemsEnabled() && mAdapter.isColumnEnabled(columnIndex));
+
+            int finalColumnIndex = columnIndex;
+            itemView.setOnClickListener(view -> {
+                onColumnClick(this, finalColumnIndex);
+                if (mColumnClicListener != null) {
+                    mColumnClicListener.onColumnClick(this, finalColumnIndex);
+                }
+            });
+        }
+    }
+
     private void initializationLayout(Context context) {
         mInflater = LayoutInflater.from(context);
 
@@ -231,70 +295,6 @@ public class TableView extends ContentFrameLayout {
                 mValueClickListener.onValueClick(TableView.this, value);
             }
         });
-    }
-
-    private void setRowNames(List<Table.Row> rows) {
-        if (isInvalidated) {
-            mScrollHelper.moveToPosition(0);
-            mRowScrollView.scrollTo(0, 0);
-        }
-        mRowHeaderContainer.removeAllViews();
-        if (mAdapter == null || rows == null || rows.isEmpty()) {
-            return;
-        }
-        for (int rowIndex = 0; rowIndex < rows.size(); rowIndex++) {
-            View itemView = mAdapter.getRowHeaderView(mInflater, mRowHeaderContainer, rowIndex);
-            ViewGroup.LayoutParams layoutParams;
-            if (itemView == null) {
-                layoutParams = new ViewGroup.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
-                itemView = new View(getContext());
-                itemView.setEnabled(false);
-            } else {
-                layoutParams = itemView.getLayoutParams();
-            }
-            layoutParams.width = ViewGroup.LayoutParams.MATCH_PARENT;
-            mRowHeaderContainer.addView(itemView, layoutParams);
-
-            itemView.setEnabled(itemView.isEnabled() && mAdapter.areAllItemsEnabled() && mAdapter.isRowEnabled(rowIndex));
-
-            Table.Row row = rows.get(rowIndex);
-
-            itemView.setOnClickListener(view -> {
-                onRowClick(this, row);
-                if (mRowClickListener != null) {
-                    mRowClickListener.onRowClick(this, row);
-                }
-            });
-        }
-    }
-
-    private void setColumnNames(int columnCount) {
-        if (isInvalidated) {
-            mContentScrollView.scrollTo(0, 0);
-        }
-        mColumnHeaderContainer.removeAllViews();
-        if (mAdapter == null || columnCount == 0) {
-            return;
-        }
-        for (int columnIndex = 0; columnIndex < columnCount; columnIndex++) {
-            View itemView = mAdapter.getColumnHeaderView(mInflater, mColumnHeaderContainer, columnIndex);
-
-            if (itemView == null) {
-                itemView = new View(getContext());
-                itemView.setEnabled(false);
-            }
-            mColumnHeaderContainer.addView(itemView);
-
-            itemView.setEnabled(itemView.isEnabled() && mAdapter.areAllItemsEnabled() && mAdapter.isColumnEnabled(columnIndex));
-
-            int finalColumnIndex = columnIndex;
-            itemView.setOnClickListener(view -> {
-                onColumnClick(this, finalColumnIndex);
-                if (mColumnClicListener != null) {
-                    mColumnClicListener.onColumnClick(this, finalColumnIndex);
-                }
-            });
-        }
     }
 
     private Drawable getDrawable(@DrawableRes int id) {
