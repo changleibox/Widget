@@ -20,7 +20,7 @@ import java.util.List;
 
 import me.box.app.testtableview.activity.BaseActivity;
 import me.box.app.testtableview.entity.Table;
-import me.box.widget.adapter.BaseTableAdapter;
+import me.box.widget.adapter.BaseAdapter;
 import me.box.widget.ui.TableView;
 
 /**
@@ -39,13 +39,13 @@ public class TestTableViewActivity extends BaseActivity implements SwipeRefreshL
 
     private TestSortTask mTestSortTask;
 
-    private TestTableAdapter mTableAdapter;
+    private TestAdapter mTableAdapter;
 
     @Override
     public void onInitViews(@Nullable Bundle savedInstanceState) {
         mTableView = (TableView) findViewById(R.id.vh_recycler_view);
         mRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.refresh_layout);
-        mTableAdapter = new TestTableAdapter();
+        mTableAdapter = new TestAdapter();
     }
 
     @Override
@@ -110,7 +110,7 @@ public class TestTableViewActivity extends BaseActivity implements SwipeRefreshL
         }
     }
 
-    private class TestTableAdapter extends BaseTableAdapter {
+    private class TestAdapter extends BaseAdapter {
 
         private Table mTable;
 
@@ -118,16 +118,18 @@ public class TestTableViewActivity extends BaseActivity implements SwipeRefreshL
             this.mTable = table;
         }
 
+        @NonNull
         @Override
-        public View getColumnHeaderView(LayoutInflater inflater, ViewGroup parent, int columnIndex) {
+        public View getColumnHeaderView(@NonNull LayoutInflater inflater, @NonNull ViewGroup parent, int columnIndex) {
             TableValueView valueView = new TableValueView(TestTableViewActivity.this);
             valueView.setText(mTable.getColumnNames().get(columnIndex));
             valueView.setMinHeight((int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 48, getResources().getDisplayMetrics()));
             return valueView;
         }
 
+        @NonNull
         @Override
-        public View getRowHeaderView(LayoutInflater inflater, ViewGroup parent, int rowIndex) {
+        public View getRowHeaderView(@NonNull LayoutInflater inflater, @NonNull ViewGroup parent, int rowIndex) {
             final Table.Row row = mTable.getRows().get(rowIndex);
 
             View itemView = inflater.inflate(R.layout.layout_row_name, parent, false);
@@ -140,8 +142,9 @@ public class TestTableViewActivity extends BaseActivity implements SwipeRefreshL
             return itemView;
         }
 
+        @NonNull
         @Override
-        public View getValueView(LayoutInflater inflater, ViewGroup parent, int columnIndex, int rowIndex) {
+        public View getValueView(@NonNull LayoutInflater inflater, @NonNull ViewGroup parent, int columnIndex, int rowIndex) {
             List<Table.Row> rows = mTable.getRows();
             if (rows.size() <= rowIndex) {
                 return null;

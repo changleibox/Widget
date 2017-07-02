@@ -10,6 +10,7 @@ import android.database.DataSetObserver;
 import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.support.annotation.DrawableRes;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.widget.NestedScrollView;
 import android.support.v7.widget.ContentFrameLayout;
@@ -28,7 +29,7 @@ import android.widget.TextView;
 import java.util.List;
 
 import me.box.widget.R;
-import me.box.widget.adapter.BaseTableAdapter;
+import me.box.widget.adapter.BaseAdapter;
 import me.box.widget.adapter.TableAdapter;
 
 /**
@@ -348,7 +349,7 @@ public class TableView extends ContentFrameLayout {
         void onValueClick(TableView view, Table.Value value);
     }
 
-    private class PreviewAdapter extends BaseTableAdapter {
+    private class PreviewAdapter extends BaseAdapter {
 
         private final int mPadding;
 
@@ -356,18 +357,21 @@ public class TableView extends ContentFrameLayout {
             mPadding = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 8, getResources().getDisplayMetrics());
         }
 
+        @NonNull
         @Override
-        public View getColumnHeaderView(LayoutInflater inflater, ViewGroup parent, int columnIndex) {
+        public View getColumnHeaderView(@NonNull LayoutInflater inflater, @NonNull ViewGroup parent, int columnIndex) {
             return getView(String.format("Column%1$s", columnIndex));
         }
 
+        @NonNull
         @Override
-        public View getRowHeaderView(LayoutInflater inflater, ViewGroup parent, int rowIndex) {
+        public View getRowHeaderView(@NonNull LayoutInflater inflater, @NonNull ViewGroup parent, int rowIndex) {
             return getView(String.format("Row%1$s", rowIndex));
         }
 
+        @NonNull
         @Override
-        public View getValueView(LayoutInflater inflater, ViewGroup parent, int columnIndex, int rowIndex) {
+        public View getValueView(@NonNull LayoutInflater inflater, @NonNull ViewGroup parent, int columnIndex, int rowIndex) {
             return getView(String.format("Value%1$s,%2$s", columnIndex, rowIndex));
         }
 
