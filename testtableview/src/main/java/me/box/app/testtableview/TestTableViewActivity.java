@@ -16,12 +16,14 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import me.box.app.testtableview.activity.BaseActivity;
 import me.box.app.testtableview.entity.Table;
-import me.box.widget.adapter.ArrayAdapter;
-import me.box.widget.ui.TableView;
+import me.box.widget.impl.SortAdapter;
+import me.box.widget.ui.SortTableView;
 
 /**
  * Created by box on 2017/6/29.
@@ -34,7 +36,7 @@ public class TestTableViewActivity extends BaseActivity implements SwipeRefreshL
     private static final int ROW_COUNT = 15;
     private static final int COLUMNS_COUNT = 11;
 
-    private TableView mTableView;
+    private SortTableView mTableView;
     private SwipeRefreshLayout mRefreshLayout;
 
     private TestSortTask mTestSortTask;
@@ -43,7 +45,7 @@ public class TestTableViewActivity extends BaseActivity implements SwipeRefreshL
 
     @Override
     public void onInitViews(@Nullable Bundle savedInstanceState) {
-        mTableView = (TableView) findViewById(R.id.vh_recycler_view);
+        mTableView = (SortTableView) findViewById(R.id.vh_recycler_view);
         mRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.refresh_layout);
         mTableAdapter = new TestAdapter();
     }
@@ -110,9 +112,10 @@ public class TestTableViewActivity extends BaseActivity implements SwipeRefreshL
         }
     }
 
-    private class TestAdapter extends ArrayAdapter<String, Table.Row, Table.Value> {
+    private class TestAdapter extends SortAdapter<String, Table.Row, Table.Value> {
 
         private boolean hasAvatar;
+        private List<Table.Row> mRows;
 
         private void setTable(Table table) {
             if (table == null) {
@@ -120,11 +123,11 @@ public class TestTableViewActivity extends BaseActivity implements SwipeRefreshL
             }
             hasAvatar = table.isHasAvatar();
             setNotifyOnChange(false);
-            List<Table.Row> rows = table.getRows();
+            mRows = table.getRows();
             setColumns(table.getColumnNames());
-            setRows(rows);
-            for (int i = 0; i < rows.size(); i++) {
-                setValuesToRow(i, rows.get(i).getValues());
+            setRows(mRows);
+            for (int i = 0; i < mRows.size(); i++) {
+                setValuesToRow(i, mRows.get(i).getValues());
             }
             notifyDataSetChanged();
         }
@@ -158,6 +161,36 @@ public class TestTableViewActivity extends BaseActivity implements SwipeRefreshL
             TextView tvValue = itemView.findViewById(R.id.tv_value);
             tvValue.setText(value.getLabel());
             return itemView;
+        }
+
+        @Override
+        public List<Table.Row> sort(final boolean isOrder, final int column) {
+            if (mRows == null || mRows.isEmpty()) {
+                return null;
+            }
+            Collections.sort(mRows, new Comparator<Table.Row>() {
+                @Override
+                public int compare(Table.Row row1, Table.Row row2) {
+                    List<Table.Value> values1 = row1.getValues();
+                    List<Table.Value> values2 = row2.getValues();
+                    if (values1.size() <= column || values2.size() <= column) {
+                        return 0;
+                    }
+                    double value1 = values1.get(column).getValue();
+                    double value2 = values2.get(column).getValue();
+                    return isOrder ? Double.compare(value1, value2) : Double.compare(value2, value1);
+                }
+            });
+            return mRows;
+        }
+
+        @Override
+        public List<Table.Row> reverse() {
+            if (mRows == null || mRows.isEmpty()) {
+                return null;
+            }
+            Collections.reverse(mRows);
+            return mRows;
         }
     }
 
