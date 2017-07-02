@@ -151,14 +151,6 @@ public class TestTableViewActivity extends BaseActivity implements SwipeRefreshL
 
         @Override
         protected View getValueView(LayoutInflater inflater, ViewGroup parent, @Nullable Table.Value value, int columnIndex, int rowIndex) {
-            // List<Table.Row> rows = mTable.getRows();
-            // if (rows.size() <= rowIndex) {
-            //     return null;
-            // }
-            // List<Table.Value> values = rows.get(rowIndex).getValues();
-            // if (values.size() <= columnIndex) {
-            //     return null;
-            // }
             if (value == null) {
                 return null;
             }
