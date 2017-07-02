@@ -16,7 +16,6 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -170,11 +169,6 @@ public class TestTableViewActivity extends BaseActivity implements SwipeRefreshL
             if (mRows == null || mRows.isEmpty()) {
                 return;
             }
-            int[] sortedRowIndex = new int[mRows.size()];
-            for (int i = 0; i < mRows.size(); i++) {
-                sortedRowIndex[i] = mRows.get(i).getCurrentRowIndex();
-            }
-            System.out.println(Arrays.toString(sortedRowIndex));
             Collections.sort(mRows, new Comparator<TableData.Row>() {
                 @Override
                 public int compare(TableData.Row row1, TableData.Row row2) {
