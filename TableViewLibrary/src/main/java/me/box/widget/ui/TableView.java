@@ -184,9 +184,7 @@ public class TableView extends ContentFrameLayout {
                 if (mAdapter == null || mAdapter.isColumnEmpty()) {
                     return;
                 }
-                if (recyclerView.getScrollState() != RecyclerView.SCROLL_STATE_IDLE) {
-                    mRowScrollView.scrollBy(dx, dy);
-                }
+                mRowScrollView.scrollBy(dx, dy);
             }
         });
 
