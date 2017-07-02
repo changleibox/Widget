@@ -333,7 +333,7 @@ public class TableView extends ContentFrameLayout {
         private Table table;
 
         public AssembleTask(@Nullable Table table) {
-            this.table = table;
+            mTable = this.table = table;
         }
 
         @Override

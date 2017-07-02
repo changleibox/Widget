@@ -39,11 +39,11 @@ public class Table {
     }
 
     <T extends Row> void addRow(T row) {
-        getRows().add(row);
+        rows.add(row);
     }
 
     public List<Row> getRows() {
-        return rows;
+        return new ArrayList<>(rows);
     }
 
     void setRows(List<? extends Row> rows) {
@@ -92,7 +92,7 @@ public class Table {
         }
 
         public List<Value> getValues() {
-            return values;
+            return new ArrayList<>(values);
         }
 
         void setValues(List<? extends Value> values) {
@@ -103,7 +103,7 @@ public class Table {
         }
 
         <T extends Value> void addValue(T value) {
-            getValues().add(value);
+            values.add(value);
         }
 
         public int getHeight() {

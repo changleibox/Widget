@@ -106,7 +106,7 @@ public class SortTableView extends TableView {
             }
             Collections.sort(rows, (row1, row2) ->
                     Double.compare(row1.getCurrentRowIndex(), row2.getCurrentRowIndex()));
-            return rows;
+            return Collections.unmodifiableList(rows);
         }
 
         @Override
