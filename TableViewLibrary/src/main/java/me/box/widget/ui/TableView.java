@@ -78,8 +78,6 @@ public class TableView extends ContentFrameLayout {
 
     private final DisplayMetrics mMetrics;
 
-    private Table mTable;
-
     public TableView(Context context) {
         this(context, null);
     }
@@ -172,23 +170,14 @@ public class TableView extends ContentFrameLayout {
     void onValueClick(TableView view, Table.Value value) {
     }
 
-    @Nullable
-    Table getTable() {
-        return mTable;
-    }
-
-    void refreshDatas(@Nullable Table table) {
+    void refreshDatas() {
         if (mAssembleTask != null) {
             mAssembleTask.cancel(true);
             mAssembleTask = null;
         }
         if (mAdapter != null) {
-            (mAssembleTask = new AssembleTask(table)).execute(mAdapter);
+            (mAssembleTask = new AssembleTask()).execute(mAdapter);
         }
-    }
-
-    private void refreshDatas() {
-        refreshDatas(null);
     }
 
     private void initializationLayout(Context context) {
@@ -332,15 +321,8 @@ public class TableView extends ContentFrameLayout {
 
         private Table table;
 
-        public AssembleTask(@Nullable Table table) {
-            mTable = this.table = table;
-        }
-
         @Override
         protected Table doInBackground(TableAdapter... adapters) {
-            if (table != null) {
-                return table;
-            }
             TableAdapter adapter = adapters[0];
             table = new Table();
             if (adapter == null) {
@@ -362,7 +344,7 @@ public class TableView extends ContentFrameLayout {
                 }
                 table.addRow(row);
             }
-            return mTable = table;
+            return table;
         }
 
         @Override

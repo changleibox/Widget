@@ -56,7 +56,7 @@ public class SortTableView extends TableView {
             mSortTask.cancel(true);
             mSortTask = null;
         }
-        (mSortTask = new SortTask(columnIndex)).execute(getTable());
+        (mSortTask = new SortTask(columnIndex)).execute();
     }
 
     public void setAdapter(@Nullable SortAdapter adapter) {
@@ -114,11 +114,6 @@ public class SortTableView extends TableView {
             if (rows == null || mSortAdapter == null) {
                 return;
             }
-            Table table = getTable();
-            if (table != null) {
-                table.setRows(rows);
-            }
-            refreshDatas(table);
 
             if (mSortListener != null) {
                 mSortListener.onSort(SortTableView.this, column, mSortType, rows);
