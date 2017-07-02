@@ -4,9 +4,7 @@
 
 package me.box.widget.impl;
 
-import java.util.List;
-
-import me.box.widget.adapter.ArrayAdapter;
+import me.box.widget.adapter.TableAdapter;
 
 /**
  * Created by Box on 2017/7/2.
@@ -14,9 +12,9 @@ import me.box.widget.adapter.ArrayAdapter;
  * 排序
  */
 
-public abstract class SortAdapter<Column, Row, Value> extends ArrayAdapter<Column, Row, Value> {
+public interface SortAdapter extends TableAdapter {
 
-    public abstract List<Row> sort(final boolean isOrder, final int column);
+    int[] sort(final boolean isOrder, final int column);
 
-    public abstract List<Row> reverse();
+    int[] reverse();
 }

@@ -9,6 +9,7 @@ import android.os.AsyncTask;
 import android.support.annotation.Nullable;
 import android.util.AttributeSet;
 
+import java.util.Collections;
 import java.util.List;
 
 import me.box.widget.impl.SortAdapter;
@@ -55,7 +56,7 @@ public class SortTableView extends TableView {
             mSortTask.cancel(true);
             mSortTask = null;
         }
-        (mSortTask = new SortTask(columnIndex)).execute();
+        (mSortTask = new SortTask(columnIndex)).execute(getTable());
     }
 
     public void setAdapter(@Nullable SortAdapter adapter) {
@@ -72,7 +73,7 @@ public class SortTableView extends TableView {
         this.mSortListener = listener;
     }
 
-    private class SortTask extends AsyncTask<Void, Void, List<?>> {
+    private class SortTask extends AsyncTask<Table, Void, List<Table.Row>> {
 
         private SortType mSortType;
         private final int column;
@@ -82,30 +83,42 @@ public class SortTableView extends TableView {
         }
 
         @Override
-        protected List<?> doInBackground(Void... voids) {
-            if (mSortAdapter == null) {
+        protected List<Table.Row> doInBackground(Table... tables) {
+            Table table = tables[0];
+            if (mSortAdapter == null || table == null) {
                 return null;
             }
-            List<?> sortedRows;
+            int[] sortedRowIndexes;
             if (isReverse) {
                 mSortType = mDefaultSortType == SortType.Order ? SortType.Reverse : SortType.Order;
-                sortedRows = mSortAdapter.reverse();
+                sortedRowIndexes = mSortAdapter.reverse();
             } else {
                 mSortType = mDefaultSortType;
                 isReverse = true;
-                sortedRows = mSortAdapter.sort(mDefaultSortType == SortType.Order, column);
+                sortedRowIndexes = mSortAdapter.sort(mDefaultSortType == SortType.Order, column);
             }
-            return sortedRows;
+            if (sortedRowIndexes == null) {
+                return null;
+            }
+            List<Table.Row> rows = table.getRows();
+            for (int i = 0; i < rows.size(); i++) {
+                rows.get(i).setCurrentRowIndex(sortedRowIndexes[i]);
+            }
+            Collections.sort(rows, (row1, row2) ->
+                    Double.compare(row1.getCurrentRowIndex(), row2.getCurrentRowIndex()));
+            return rows;
         }
 
-        @SuppressWarnings("unchecked")
         @Override
-        protected void onPostExecute(List<?> rows) {
+        protected void onPostExecute(List<Table.Row> rows) {
             if (rows == null || mSortAdapter == null) {
                 return;
             }
-            mSortAdapter.setRows(rows);
-            mSortAdapter.notifyDataSetChanged();
+            Table table = getTable();
+            if (table != null) {
+                table.setRows(rows);
+            }
+            refreshDatas(table);
 
             if (mSortListener != null) {
                 mSortListener.onSort(SortTableView.this, column, mSortType, rows);

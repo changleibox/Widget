@@ -16,12 +16,14 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
 import me.box.app.testtableview.activity.BaseActivity;
 import me.box.app.testtableview.entity.Table;
+import me.box.widget.adapter.ArrayAdapter;
 import me.box.widget.impl.SortAdapter;
 import me.box.widget.ui.SortTableView;
 
@@ -96,6 +98,7 @@ public class TestTableViewActivity extends BaseActivity implements SwipeRefreshL
             }
             for (int row = 0; row < ROW_COUNT; row++) {
                 Table.Row item = new Table.Row("Row" + row);
+                item.setCurrentRowIndex(row);
                 for (int column = 0; column < COLUMNS_COUNT; column++) {
                     item.addValue(new Table.Value(Math.random()));
                 }
@@ -112,7 +115,7 @@ public class TestTableViewActivity extends BaseActivity implements SwipeRefreshL
         }
     }
 
-    private class TestAdapter extends SortAdapter<String, Table.Row, Table.Value> {
+    private class TestAdapter extends ArrayAdapter<String, Table.Row, Table.Value> implements SortAdapter {
 
         private boolean hasAvatar;
         private List<Table.Row> mRows;
@@ -164,10 +167,15 @@ public class TestTableViewActivity extends BaseActivity implements SwipeRefreshL
         }
 
         @Override
-        public List<Table.Row> sort(final boolean isOrder, final int column) {
+        public int[] sort(final boolean isOrder, final int column) {
             if (mRows == null || mRows.isEmpty()) {
                 return null;
             }
+            int[] sortedRowIndex = new int[mRows.size()];
+            for (int i = 0; i < mRows.size(); i++) {
+                sortedRowIndex[i] = mRows.get(i).getCurrentRowIndex();
+            }
+            System.out.println(Arrays.toString(sortedRowIndex));
             Collections.sort(mRows, new Comparator<Table.Row>() {
                 @Override
                 public int compare(Table.Row row1, Table.Row row2) {
@@ -181,16 +189,25 @@ public class TestTableViewActivity extends BaseActivity implements SwipeRefreshL
                     return isOrder ? Double.compare(value1, value2) : Double.compare(value2, value1);
                 }
             });
-            return mRows;
+            sortedRowIndex = new int[mRows.size()];
+            for (int i = 0; i < mRows.size(); i++) {
+                sortedRowIndex[i] = mRows.get(i).getCurrentRowIndex();
+            }
+            System.out.println(Arrays.toString(sortedRowIndex));
+            return sortedRowIndex;
         }
 
         @Override
-        public List<Table.Row> reverse() {
+        public int[] reverse() {
             if (mRows == null || mRows.isEmpty()) {
                 return null;
             }
             Collections.reverse(mRows);
-            return mRows;
+            int[] sortedRowIndex = new int[mRows.size()];
+            for (int i = 0; i < mRows.size(); i++) {
+                sortedRowIndex[i] = mRows.get(i).getCurrentRowIndex();
+            }
+            return sortedRowIndex;
         }
     }
 

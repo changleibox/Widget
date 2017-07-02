@@ -22,10 +22,12 @@ public abstract class BaseAdapter implements TableAdapter {
     public BaseAdapter() {
     }
 
+    @Override
     public void notifyDataSetChanged() {
         mDataSetObservable.notifyChanged();
     }
 
+    @Override
     public void notifyDataSetInvalidated() {
         mDataSetObservable.notifyInvalidated();
     }

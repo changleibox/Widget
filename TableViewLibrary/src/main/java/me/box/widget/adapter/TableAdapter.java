@@ -23,6 +23,10 @@ public interface TableAdapter {
 
     void unregisterDataSetObserver(@NonNull DataSetObserver observer);
 
+    void notifyDataSetChanged();
+
+    void notifyDataSetInvalidated();
+
     View getColumnHeaderView(@NonNull LayoutInflater inflater, @NonNull ViewGroup parent, int columnIndex);
 
     View getRowHeaderView(@NonNull LayoutInflater inflater, @NonNull ViewGroup parent, int rowIndex);

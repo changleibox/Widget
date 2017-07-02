@@ -78,6 +78,8 @@ public class TableView extends ContentFrameLayout {
 
     private final DisplayMetrics mMetrics;
 
+    private Table mTable;
+
     public TableView(Context context) {
         this(context, null);
     }
@@ -170,6 +172,25 @@ public class TableView extends ContentFrameLayout {
     void onValueClick(TableView view, Table.Value value) {
     }
 
+    @Nullable
+    Table getTable() {
+        return mTable;
+    }
+
+    void refreshDatas(@Nullable Table table) {
+        if (mAssembleTask != null) {
+            mAssembleTask.cancel(true);
+            mAssembleTask = null;
+        }
+        if (mAdapter != null) {
+            (mAssembleTask = new AssembleTask(table)).execute(mAdapter);
+        }
+    }
+
+    private void refreshDatas() {
+        refreshDatas(null);
+    }
+
     private void initializationLayout(Context context) {
         mInflater = LayoutInflater.from(context);
 
@@ -218,16 +239,6 @@ public class TableView extends ContentFrameLayout {
                 mValueClickListener.onValueClick(TableView.this, value);
             }
         });
-    }
-
-    private void refreshDatas() {
-        if (mAssembleTask != null) {
-            mAssembleTask.cancel(true);
-            mAssembleTask = null;
-        }
-        if (mAdapter != null) {
-            (mAssembleTask = new AssembleTask()).execute(mAdapter);
-        }
     }
 
     private void setRowNames(List<Table.Row> rows) {
@@ -321,10 +332,17 @@ public class TableView extends ContentFrameLayout {
 
         private Table table;
 
+        public AssembleTask(@Nullable Table table) {
+            this.table = table;
+        }
+
         @Override
         protected Table doInBackground(TableAdapter... adapters) {
+            if (table != null) {
+                return table;
+            }
             TableAdapter adapter = adapters[0];
-            Table table = new Table();
+            table = new Table();
             if (adapter == null) {
                 return table;
             }
@@ -334,15 +352,17 @@ public class TableView extends ContentFrameLayout {
             for (int rowIndex = 0; rowIndex < rowCount; rowIndex++) {
                 Table.Row row = new Table.Row();
                 row.setRawRowIndex(rowIndex);
+                row.setCurrentRowIndex(rowIndex);
                 for (int columnIndex = 0; columnIndex < columnCount; columnIndex++) {
                     Table.Value value = new Table.Value();
+                    value.setCurrentRowIndex(rowIndex);
                     value.setRawRowIndex(rowIndex);
                     value.setColumnIndex(columnIndex);
                     row.addValue(value);
                 }
                 table.addRow(row);
             }
-            return table;
+            return mTable = table;
         }
 
         @Override
