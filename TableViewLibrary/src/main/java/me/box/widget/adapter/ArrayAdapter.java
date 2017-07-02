@@ -111,7 +111,6 @@ public abstract class ArrayAdapter<Column, Row, Value> extends BaseAdapter {
 
     public void setValuesToRow(int rowIndex, List<Value> values) {
         synchronized (mLock) {
-            mValues.clear();
             for (int columnIndex = 0; columnIndex < values.size(); columnIndex++) {
                 addValueNotNotify(columnIndex, rowIndex, values.get(columnIndex));
             }
@@ -121,9 +120,19 @@ public abstract class ArrayAdapter<Column, Row, Value> extends BaseAdapter {
 
     public void setValuesToColumn(int columnIndex, List<Value> values) {
         synchronized (mLock) {
-            mValues.clear();
             for (int rowIndex = 0; rowIndex < values.size(); rowIndex++) {
                 addValueNotNotify(columnIndex, rowIndex, values.get(rowIndex));
+            }
+        }
+        if (mNotifyOnChange) notifyDataSetChanged();
+    }
+
+    public void setValues(SparseArray<SparseArray<Value>> values) {
+        synchronized (mLock) {
+            mValues.clear();
+            for (int i = 0; i < values.size(); i++) {
+                int columnIndex = values.keyAt(i);
+                mValues.put(columnIndex, values.get(columnIndex));
             }
         }
         if (mNotifyOnChange) notifyDataSetChanged();
