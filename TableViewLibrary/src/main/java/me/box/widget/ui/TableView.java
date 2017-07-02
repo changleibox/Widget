@@ -71,6 +71,8 @@ public class TableView extends ContentFrameLayout {
     private OnColumnClickListener mColumnClicListener;
     @Nullable
     private OnRowClickListener mRowClickListener;
+    @Nullable
+    private OnValueClickListener mValueClickListener;
 
     private boolean isInvalidated;
 
@@ -156,12 +158,7 @@ public class TableView extends ContentFrameLayout {
     }
 
     public void setOnValueClickListener(final OnValueClickListener listener) {
-        mValueAdapter.setOnValueClickListener((Table.Value value) -> {
-            onValueClick(TableView.this, value);
-            if (listener != null) {
-                listener.onValueClick(TableView.this, value);
-            }
-        });
+        this.mValueClickListener = listener;
     }
 
     void onColumnClick(TableView view, int columnIndex) {
@@ -214,6 +211,13 @@ public class TableView extends ContentFrameLayout {
         });
 
         mValueContainer.setAdapter(mValueAdapter = new ValueAdapter(context));
+
+        mValueAdapter.setOnValueClickListener((Table.Value value) -> {
+            onValueClick(TableView.this, value);
+            if (mValueClickListener != null) {
+                mValueClickListener.onValueClick(TableView.this, value);
+            }
+        });
     }
 
     private void refreshDatas() {
@@ -252,8 +256,8 @@ public class TableView extends ContentFrameLayout {
 
             Table.Row row = rows.get(rowIndex);
 
-            onRowClick(this, row);
             itemView.setOnClickListener(view -> {
+                onRowClick(this, row);
                 if (mRowClickListener != null) {
                     mRowClickListener.onRowClick(this, row);
                 }
@@ -280,9 +284,9 @@ public class TableView extends ContentFrameLayout {
 
             itemView.setEnabled(itemView.isEnabled() && mAdapter.areAllItemsEnabled() && mAdapter.isColumnEnabled(columnIndex));
 
-            onColumnClick(this, columnIndex);
             int finalColumnIndex = columnIndex;
             itemView.setOnClickListener(view -> {
+                onColumnClick(this, finalColumnIndex);
                 if (mColumnClicListener != null) {
                     mColumnClicListener.onColumnClick(this, finalColumnIndex);
                 }
