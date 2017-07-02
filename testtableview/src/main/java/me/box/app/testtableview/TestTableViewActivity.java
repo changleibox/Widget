@@ -20,7 +20,7 @@ import java.util.List;
 
 import me.box.app.testtableview.activity.BaseActivity;
 import me.box.app.testtableview.entity.Table;
-import me.box.widget.adapter.BaseAdapter;
+import me.box.widget.adapter.ArrayAdapter;
 import me.box.widget.ui.TableView;
 
 /**
@@ -110,63 +110,62 @@ public class TestTableViewActivity extends BaseActivity implements SwipeRefreshL
         }
     }
 
-    private class TestAdapter extends BaseAdapter {
+    private class TestAdapter extends ArrayAdapter<String, Table.Row, Table.Value> {
 
-        private Table mTable;
+        private boolean hasAvatar;
 
         private void setTable(Table table) {
-            this.mTable = table;
+            if (table == null) {
+                return;
+            }
+            hasAvatar = table.isHasAvatar();
+            setNotifyOnChange(false);
+            List<Table.Row> rows = table.getRows();
+            setColumns(table.getColumnNames());
+            setRows(rows);
+            for (int i = 0; i < rows.size(); i++) {
+                setValuesToRow(i, rows.get(i).getValues());
+            }
+            notifyDataSetChanged();
         }
 
-        @NonNull
         @Override
-        public View getColumnHeaderView(@NonNull LayoutInflater inflater, @NonNull ViewGroup parent, int columnIndex) {
+        protected View getColumnHeaderView(LayoutInflater inflater, ViewGroup parent, String s, int columnIndex) {
             TableValueView valueView = new TableValueView(TestTableViewActivity.this);
-            valueView.setText(mTable.getColumnNames().get(columnIndex));
+            valueView.setText(s);
             valueView.setMinHeight((int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 48, getResources().getDisplayMetrics()));
             return valueView;
         }
 
-        @NonNull
         @Override
-        public View getRowHeaderView(@NonNull LayoutInflater inflater, @NonNull ViewGroup parent, int rowIndex) {
-            final Table.Row row = mTable.getRows().get(rowIndex);
-
+        protected View getRowHeaderView(LayoutInflater inflater, ViewGroup parent, Table.Row row, int rowIndex) {
             View itemView = inflater.inflate(R.layout.layout_row_name, parent, false);
             TableValueView rowNameView = itemView.findViewById(R.id.tv_name);
             ImageView ivAvatar = itemView.findViewById(R.id.iv_avatar);
 
-            ivAvatar.setVisibility(mTable.isHasAvatar() ? View.VISIBLE : View.GONE);
+            ivAvatar.setVisibility(hasAvatar ? View.VISIBLE : View.GONE);
             ivAvatar.setImageResource(R.mipmap.ic_launcher_round);
             rowNameView.setText(row.getRowName());
             return itemView;
         }
 
-        @NonNull
         @Override
-        public View getValueView(@NonNull LayoutInflater inflater, @NonNull ViewGroup parent, int columnIndex, int rowIndex) {
-            List<Table.Row> rows = mTable.getRows();
-            if (rows.size() <= rowIndex) {
-                return null;
-            }
-            List<Table.Value> values = rows.get(rowIndex).getValues();
-            if (values.size() <= columnIndex) {
+        protected View getValueView(LayoutInflater inflater, ViewGroup parent, @Nullable Table.Value value, int columnIndex, int rowIndex) {
+            // List<Table.Row> rows = mTable.getRows();
+            // if (rows.size() <= rowIndex) {
+            //     return null;
+            // }
+            // List<Table.Value> values = rows.get(rowIndex).getValues();
+            // if (values.size() <= columnIndex) {
+            //     return null;
+            // }
+            if (value == null) {
                 return null;
             }
             View itemView = inflater.inflate(R.layout.item_table_value, parent, false);
             TextView tvValue = itemView.findViewById(R.id.tv_value);
-            tvValue.setText(values.get(columnIndex).getLabel());
+            tvValue.setText(value.getLabel());
             return itemView;
-        }
-
-        @Override
-        public int getColumnCount() {
-            return mTable == null ? 0 : mTable.getColumnNames().size();
-        }
-
-        @Override
-        public int getRowCount() {
-            return mTable == null ? 0 : mTable.getRows().size();
         }
     }
 
