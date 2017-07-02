@@ -37,6 +37,8 @@ public class SortTableView extends TableView {
     @Nullable
     private SortAdapter mSortAdapter;
 
+    private int mTmpClickColumnIndex = -1;
+
     public SortTableView(Context context) {
         super(context);
     }
@@ -51,6 +53,10 @@ public class SortTableView extends TableView {
 
     @Override
     void onColumnClick(TableView view, int columnIndex) {
+        if (mTmpClickColumnIndex != columnIndex) {
+            isReverse = false;
+            mTmpClickColumnIndex = columnIndex;
+        }
         if (mSortTask != null) {
             mSortTask.cancel(true);
             mSortTask = null;
