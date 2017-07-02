@@ -23,13 +23,10 @@ public interface TableAdapter {
 
     void unregisterDataSetObserver(@NonNull DataSetObserver observer);
 
-    @NonNull
     View getColumnHeaderView(@NonNull LayoutInflater inflater, @NonNull ViewGroup parent, int columnIndex);
 
-    @NonNull
     View getRowHeaderView(@NonNull LayoutInflater inflater, @NonNull ViewGroup parent, int rowIndex);
 
-    @NonNull
     View getValueView(@NonNull LayoutInflater inflater, @NonNull ViewGroup parent, int columnIndex, int rowIndex);
 
     @IntRange(from = 0)
