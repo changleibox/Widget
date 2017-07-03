@@ -98,7 +98,7 @@ public class TableViewDemoActivity extends BaseActivity implements SwipeRefreshL
     @Nullable
     @Override
     public View getLayout(@Nullable Bundle savedInstanceState, @NonNull LayoutInflater inflater, @NonNull ViewGroup parent) {
-        return inflater.inflate(R.layout.activity_test_table_view, parent, false);
+        return inflater.inflate(R.layout.activity_table_view_demo, parent, false);
     }
 
     @Override
