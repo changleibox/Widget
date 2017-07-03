@@ -351,7 +351,6 @@ public class TableView extends ContentFrameLayout {
             for (int rowIndex = 0; rowIndex < rowCount; rowIndex++) {
                 Table.Row row = new Table.Row();
                 row.setRawRowIndex(rowIndex);
-                row.setCurrentRowIndex(rowIndex);
                 for (int columnIndex = 0; columnIndex < columnCount; columnIndex++) {
                     Table.Value value = new Table.Value();
                     value.setRawRowIndex(rowIndex);

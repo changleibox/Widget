@@ -86,7 +86,6 @@ public class Table {
     public static class Row {
 
         private int rawRowIndex;
-        private int currentRowIndex;
         private int height;
         private final List<Value> values = new ArrayList<>();
 
@@ -124,13 +123,6 @@ public class Table {
             this.rawRowIndex = rawRowIndex;
         }
 
-        public int getCurrentRowIndex() {
-            return currentRowIndex;
-        }
-
-        void setCurrentRowIndex(int currentRowIndex) {
-            this.currentRowIndex = currentRowIndex;
-        }
     }
 
     public static class Value {
