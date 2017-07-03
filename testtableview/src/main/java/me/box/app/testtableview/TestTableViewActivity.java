@@ -24,6 +24,8 @@ import me.box.app.testtableview.activity.BaseActivity;
 import me.box.app.testtableview.entity.TableData;
 import me.box.widget.impl.SortAdapter;
 import me.box.widget.ui.SortTableView;
+import me.box.widget.ui.SortTableView.SortType;
+import me.box.widget.ui.TableView;
 
 /**
  * Created by box on 2017/6/29.
@@ -43,6 +45,9 @@ public class TestTableViewActivity extends BaseActivity implements SwipeRefreshL
 
     private TestAdapter mTableAdapter;
 
+    private SortType mSortType;
+    private int mSortColumnIndex;
+
     @Override
     public void onInitViews(@Nullable Bundle savedInstanceState) {
         mTableView = (SortTableView) findViewById(R.id.vh_recycler_view);
@@ -53,12 +58,21 @@ public class TestTableViewActivity extends BaseActivity implements SwipeRefreshL
     @Override
     public void onInitDatas(@Nullable Bundle savedInstanceState) {
         mTableView.setAdapter(mTableAdapter);
+        mTableView.setDefaultSortType(SortType.Order);
         onRefresh();
     }
 
     @Override
     public void onInitListeners(@Nullable Bundle savedInstanceState) {
         mRefreshLayout.setOnRefreshListener(this);
+        mTableView.setOnSortListener(new SortTableView.OnSortListener() {
+            @Override
+            public void onSort(TableView view, int columnIndex, SortType sortType) {
+                mSortType = sortType;
+                mSortColumnIndex = columnIndex;
+                mTableAdapter.notifyDataSetChanged();
+            }
+        });
     }
 
     @Nullable
@@ -110,6 +124,7 @@ public class TestTableViewActivity extends BaseActivity implements SwipeRefreshL
             mRefreshLayout.setRefreshing(false);
             mTableAdapter.setTable(table);
             mTableAdapter.notifyDataSetInvalidated();
+            mTableView.resetPerFormClickColumn(0);
         }
     }
 
@@ -137,6 +152,9 @@ public class TestTableViewActivity extends BaseActivity implements SwipeRefreshL
         protected View getColumnHeaderView(LayoutInflater inflater, ViewGroup parent, String s, int columnIndex) {
             TableValueView valueView = new TableValueView(TestTableViewActivity.this);
             valueView.setText(s);
+            if (columnIndex == mSortColumnIndex) {
+                valueView.append(mSortType == null || mSortType == SortType.Order ? "-顺序" : "-倒序");
+            }
             valueView.setMinHeight((int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 48, getResources().getDisplayMetrics()));
             return valueView;
         }

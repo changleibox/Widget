@@ -62,10 +62,9 @@ public class SortTableView extends TableView {
         (mSortTask = new SortTask(columnIndex)).execute();
     }
 
-    @Override
-    void onLayoutComplete() {
+    public void resetPerFormClickColumn(int columnIndex) {
         isReverse = false;
-        performClickColumn(0);
+        performClickColumn(columnIndex);
     }
 
     public void setAdapter(@Nullable SortAdapter adapter) {

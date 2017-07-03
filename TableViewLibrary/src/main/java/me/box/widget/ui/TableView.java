@@ -203,7 +203,11 @@ public class TableView extends ContentFrameLayout {
         if (mAssembleTask != null) {
             List<Table.Row> rows = mAssembleTask.table.getRows();
             for (int i = 0; i < rows.size(); i++) {
-                rows.get(i).setHeight(mRowHeaderContainer.getChildAt(i).getHeight());
+                View childAt = mRowHeaderContainer.getChildAt(i);
+                if (childAt == null) {
+                    continue;
+                }
+                rows.get(i).setHeight(childAt.getHeight());
             }
         }
     }
@@ -212,7 +216,11 @@ public class TableView extends ContentFrameLayout {
         if (mAssembleTask != null) {
             int childCount = mColumnHeaderContainer.getChildCount();
             for (int i = 0; i < childCount; i++) {
-                mAssembleTask.table.setColumnWidth(i, mColumnHeaderContainer.getChildAt(i).getWidth());
+                View childAt = mColumnHeaderContainer.getChildAt(i);
+                if (childAt == null) {
+                    continue;
+                }
+                mAssembleTask.table.setColumnWidth(i, childAt.getWidth());
             }
         }
     }
