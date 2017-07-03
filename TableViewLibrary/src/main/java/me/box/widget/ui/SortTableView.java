@@ -113,8 +113,10 @@ public class SortTableView extends TableView {
                 return;
             }
 
-            refreshRowNames();
-            refreshValues();
+            refreshRowNames(() -> {
+                refreshRowHeight();
+                refreshValues();
+            });
 
             if (mSortListener != null) {
                 mSortListener.onSort(SortTableView.this, columnIndex, mSortType);

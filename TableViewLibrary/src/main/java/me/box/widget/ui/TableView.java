@@ -183,18 +183,38 @@ public class TableView extends ContentFrameLayout {
         }
     }
 
-    void refreshRowNames() {
+    void refreshRowNames(ViewTreeObserver.OnGlobalLayoutListener listener) {
         if (mAssembleTask != null) {
             setRowNames(mAssembleTask.table.getRows());
         }
+        ViewCompat.addOnceOnGlobalLayoutListener(mRowHeaderContainer, listener);
     }
 
-    void refreshColumnNames() {
+    void refreshColumnNames(ViewTreeObserver.OnGlobalLayoutListener listener) {
         setColumnNames(mAdapter != null ? mAdapter.getColumnCount() : 0);
+        ViewCompat.addOnceOnGlobalLayoutListener(mColumnHeaderContainer, listener);
     }
 
     void refreshValues() {
         mValueAdapter.notifyDataSetChanged();
+    }
+
+    void refreshRowHeight() {
+        if (mAssembleTask != null) {
+            List<Table.Row> rows = mAssembleTask.table.getRows();
+            for (int i = 0; i < rows.size(); i++) {
+                rows.get(i).setHeight(mRowHeaderContainer.getChildAt(i).getHeight());
+            }
+        }
+    }
+
+    void refreshColumnWidth() {
+        if (mAssembleTask != null) {
+            int childCount = mColumnHeaderContainer.getChildCount();
+            for (int i = 0; i < childCount; i++) {
+                mAssembleTask.table.setColumnWidth(i, mColumnHeaderContainer.getChildAt(i).getWidth());
+            }
+        }
     }
 
     void setRowNames(List<Table.Row> rows) {
@@ -376,10 +396,7 @@ public class TableView extends ContentFrameLayout {
 
             @Override
             public void onGlobalLayout() {
-                int childCount = mColumnHeaderContainer.getChildCount();
-                for (int i = 0; i < childCount; i++) {
-                    table.setColumnWidth(i, mColumnHeaderContainer.getChildAt(i).getWidth());
-                }
+                refreshColumnWidth();
 
                 ViewCompat.addOnceOnGlobalLayoutListener(mRowHeaderContainer, new RowLayoutListener());
             }
@@ -389,10 +406,7 @@ public class TableView extends ContentFrameLayout {
 
             @Override
             public void onGlobalLayout() {
-                List<Table.Row> rows = table.getRows();
-                for (int i = 0; i < rows.size(); i++) {
-                    rows.get(i).setHeight(mRowHeaderContainer.getChildAt(i).getHeight());
-                }
+                refreshRowHeight();
 
                 mValueAdapter.setTable(table);
 
