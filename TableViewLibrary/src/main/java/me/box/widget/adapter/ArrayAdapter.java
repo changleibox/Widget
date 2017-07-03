@@ -4,6 +4,7 @@
 
 package me.box.widget.adapter;
 
+import android.support.annotation.MainThread;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.SparseArray;
@@ -151,6 +152,7 @@ public abstract class ArrayAdapter<Column, Row, Value> extends BaseAdapter {
         mNotifyOnChange = notifyOnChange;
     }
 
+    @MainThread
     @Override
     public void notifyDataSetChanged() {
         super.notifyDataSetChanged();

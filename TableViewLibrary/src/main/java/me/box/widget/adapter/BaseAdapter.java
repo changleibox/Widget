@@ -6,6 +6,7 @@ package me.box.widget.adapter;
 
 import android.database.DataSetObservable;
 import android.database.DataSetObserver;
+import android.support.annotation.MainThread;
 import android.support.annotation.NonNull;
 
 /**
@@ -22,11 +23,13 @@ public abstract class BaseAdapter implements TableAdapter {
     public BaseAdapter() {
     }
 
+    @MainThread
     @Override
     public void notifyDataSetChanged() {
         mDataSetObservable.notifyChanged();
     }
 
+    @MainThread
     @Override
     public void notifyDataSetInvalidated() {
         mDataSetObservable.notifyInvalidated();
