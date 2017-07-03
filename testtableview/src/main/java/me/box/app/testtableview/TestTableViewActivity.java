@@ -182,10 +182,12 @@ public class TestTableViewActivity extends BaseActivity implements SwipeRefreshL
                     return isOrder ? Double.compare(value1, value2) : Double.compare(value2, value1);
                 }
             });
+            setNotifyOnChange(false);
             setRows(mRows);
             for (int i = 0; i < mRows.size(); i++) {
                 setValuesToRow(i, mRows.get(i).getValues());
             }
+            setNotifyOnChange(true);
         }
 
         @Override
@@ -194,10 +196,12 @@ public class TestTableViewActivity extends BaseActivity implements SwipeRefreshL
                 return;
             }
             Collections.reverse(mRows);
+            setNotifyOnChange(false);
             setRows(mRows);
             for (int i = 0; i < mRows.size(); i++) {
                 setValuesToRow(i, mRows.get(i).getValues());
             }
+            setNotifyOnChange(true);
         }
     }
 

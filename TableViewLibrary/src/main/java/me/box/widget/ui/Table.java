@@ -17,6 +17,7 @@ import java.util.List;
  * 每日必看数据
  */
 
+@SuppressWarnings({"unused", "WeakerAccess"})
 public class Table {
 
     private int columnCount;
@@ -136,7 +137,6 @@ public class Table {
 
         private int columnIndex;
         private int rawRowIndex;
-        private int currentRowIndex;
 
         Value() {
         }
@@ -157,12 +157,5 @@ public class Table {
             this.rawRowIndex = rawRowIndex;
         }
 
-        public int getCurrentRowIndex() {
-            return currentRowIndex;
-        }
-
-        void setCurrentRowIndex(int currentRowIndex) {
-            this.currentRowIndex = currentRowIndex;
-        }
     }
 }
