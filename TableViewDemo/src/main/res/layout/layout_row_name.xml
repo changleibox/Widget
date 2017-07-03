@@ -22,7 +22,7 @@
             android:contentDescription="@string/app_name"
             tools:src="@mipmap/ic_launcher"/>
 
-        <me.box.app.testtableview.TableValueView
+        <me.box.app.tableviewdemo.TableValueView
             android:id="@+id/tv_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

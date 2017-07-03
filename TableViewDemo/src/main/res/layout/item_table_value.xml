@@ -6,7 +6,7 @@
               android:minHeight="48dp"
               android:orientation="vertical">
 
-    <me.box.app.testtableview.TableValueView
+    <me.box.app.tableviewdemo.TableValueView
         android:id="@+id/tv_value"
         android:layout_width="match_parent"
         android:layout_height="0dp"
