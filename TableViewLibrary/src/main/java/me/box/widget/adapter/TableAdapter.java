@@ -5,6 +5,9 @@
 package me.box.widget.adapter;
 
 import android.database.DataSetObserver;
+import android.support.annotation.IntRange;
+import android.support.annotation.MainThread;
+import android.support.annotation.NonNull;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,21 +20,33 @@ import android.view.ViewGroup;
 
 public interface TableAdapter {
 
-    void registerDataSetObserver(DataSetObserver observer);
+    void registerDataSetObserver(@NonNull DataSetObserver observer);
 
-    void unregisterDataSetObserver(DataSetObserver observer);
+    void unregisterDataSetObserver(@NonNull DataSetObserver observer);
 
-    View getColumnHeaderView(LayoutInflater inflater, ViewGroup parent, int columnIndex);
+    @MainThread
+    void notifyDataSetChanged();
 
-    View getRowHeaderView(LayoutInflater inflater, ViewGroup parent, int rowIndex);
+    @MainThread
+    void notifyDataSetInvalidated();
 
-    View getValueView(LayoutInflater inflater, ViewGroup parent, int columnIndex, int rowIndex);
+    View getColumnHeaderView(@NonNull LayoutInflater inflater, @NonNull ViewGroup parent, int columnIndex);
 
+    View getRowHeaderView(@NonNull LayoutInflater inflater, @NonNull ViewGroup parent, int rowIndex);
+
+    View getValueView(@NonNull LayoutInflater inflater, @NonNull ViewGroup parent, int columnIndex, int rowIndex);
+
+    @IntRange(from = 0)
     int getColumnCount();
 
+    @IntRange(from = 0)
     int getRowCount();
 
     boolean isEmpty();
+
+    boolean isColumnEmpty();
+
+    boolean isRowEmpty();
 
     boolean areAllItemsEnabled();
 

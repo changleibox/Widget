@@ -10,11 +10,13 @@ import android.database.DataSetObserver;
 import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.support.annotation.DrawableRes;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.widget.NestedScrollView;
 import android.support.v7.widget.ContentFrameLayout;
 import android.support.v7.widget.RecyclerView;
 import android.util.AttributeSet;
+import android.util.DisplayMetrics;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -28,7 +30,7 @@ import android.widget.TextView;
 import java.util.List;
 
 import me.box.widget.R;
-import me.box.widget.adapter.BaseTableAdapter;
+import me.box.widget.adapter.BaseAdapter;
 import me.box.widget.adapter.TableAdapter;
 
 /**
@@ -39,6 +41,9 @@ import me.box.widget.adapter.TableAdapter;
 
 @SuppressWarnings({"WeakerAccess", "unused", "deprecation"})
 public class TableView extends ContentFrameLayout {
+
+    private static final int DEFAULT_SPACE_WIDTH = 40;
+    private static final int DEFAULT_PREVIEW_PADDING = 8;
 
     private NestedScrollView mRowScrollView;
     private HorizontalScrollView mContentScrollView;
@@ -66,8 +71,12 @@ public class TableView extends ContentFrameLayout {
     private OnColumnClickListener mColumnClicListener;
     @Nullable
     private OnRowClickListener mRowClickListener;
+    @Nullable
+    private OnValueClickListener mValueClickListener;
 
     private boolean isInvalidated;
+
+    private final DisplayMetrics mMetrics;
 
     public TableView(Context context) {
         this(context, null);
@@ -79,6 +88,8 @@ public class TableView extends ContentFrameLayout {
 
     public TableView(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
+
+        mMetrics = getResources().getDisplayMetrics();
 
         TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.TableView, defStyleAttr, 0);
 
@@ -99,8 +110,19 @@ public class TableView extends ContentFrameLayout {
     protected void onLayout(boolean changed, int left, int top, int right, int bottom) {
         super.onLayout(changed, left, top, right, bottom);
 
+        int defaultSpaceSize = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, DEFAULT_SPACE_WIDTH, mMetrics);
+
         ViewGroup.LayoutParams layoutParams = mSpacer.getLayoutParams();
-        layoutParams.height = mColumnHeaderContainer.getHeight();
+        if (mAdapter == null || mAdapter.isRowEmpty()) {
+            layoutParams.width = defaultSpaceSize;
+        } else {
+            layoutParams.width = mRowScrollView.getWidth();
+        }
+        if (mAdapter == null || mAdapter.isColumnEmpty()) {
+            layoutParams.height = defaultSpaceSize;
+        } else {
+            layoutParams.height = mColumnHeaderContainer.getHeight();
+        }
         mSpacer.setLayoutParams(layoutParams);
     }
 
@@ -120,6 +142,13 @@ public class TableView extends ContentFrameLayout {
         refreshDatas();
     }
 
+    public void performClickColumn(int columnIndex) {
+        View childAt = mColumnHeaderContainer.getChildAt(columnIndex);
+        if (childAt != null) {
+            childAt.performClick();
+        }
+    }
+
     public void setOnColumnClickListener(OnColumnClickListener listener) {
         this.mColumnClicListener = listener;
     }
@@ -129,11 +158,107 @@ public class TableView extends ContentFrameLayout {
     }
 
     public void setOnValueClickListener(final OnValueClickListener listener) {
-        mValueAdapter.setOnValueClickListener((Table.Value value) -> {
-            if (listener != null) {
-                listener.onValueClick(TableView.this, value);
+        this.mValueClickListener = listener;
+    }
+
+    void onColumnClick(TableView view, int columnIndex) {
+    }
+
+    void onRowClick(TableView view, Table.Row row) {
+    }
+
+    void onValueClick(TableView view, Table.Value value) {
+    }
+
+    void onLayoutComplete() {
+    }
+
+    void refreshDatas() {
+        if (mAssembleTask != null) {
+            mAssembleTask.cancel(true);
+            mAssembleTask = null;
+        }
+        if (mAdapter != null) {
+            (mAssembleTask = new AssembleTask()).execute(mAdapter);
+        }
+    }
+
+    void refreshRowNames() {
+        if (mAssembleTask != null) {
+            setRowNames(mAssembleTask.table.getRows());
+        }
+    }
+
+    void refreshColumnNames() {
+        setColumnNames(mAdapter != null ? mAdapter.getColumnCount() : 0);
+    }
+
+    void refreshValues() {
+        mValueAdapter.notifyDataSetChanged();
+    }
+
+    void setRowNames(List<Table.Row> rows) {
+        if (isInvalidated) {
+            mScrollHelper.moveToPosition(0);
+            mRowScrollView.scrollTo(0, 0);
+        }
+        mRowHeaderContainer.removeAllViews();
+        if (mAdapter == null || rows == null || rows.isEmpty()) {
+            return;
+        }
+        for (int rowIndex = 0; rowIndex < rows.size(); rowIndex++) {
+            View itemView = mAdapter.getRowHeaderView(mInflater, mRowHeaderContainer, rowIndex);
+            ViewGroup.LayoutParams layoutParams;
+            if (itemView == null) {
+                layoutParams = new ViewGroup.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
+                itemView = new View(getContext());
+                itemView.setEnabled(false);
+            } else {
+                layoutParams = itemView.getLayoutParams();
             }
-        });
+            layoutParams.width = ViewGroup.LayoutParams.MATCH_PARENT;
+            mRowHeaderContainer.addView(itemView, layoutParams);
+
+            itemView.setEnabled(itemView.isEnabled() && mAdapter.areAllItemsEnabled() && mAdapter.isRowEnabled(rowIndex));
+
+            Table.Row row = rows.get(rowIndex);
+
+            itemView.setOnClickListener(view -> {
+                onRowClick(this, row);
+                if (mRowClickListener != null) {
+                    mRowClickListener.onRowClick(this, row);
+                }
+            });
+        }
+    }
+
+    void setColumnNames(int columnCount) {
+        if (isInvalidated) {
+            mContentScrollView.scrollTo(0, 0);
+        }
+        mColumnHeaderContainer.removeAllViews();
+        if (mAdapter == null || columnCount == 0) {
+            return;
+        }
+        for (int columnIndex = 0; columnIndex < columnCount; columnIndex++) {
+            View itemView = mAdapter.getColumnHeaderView(mInflater, mColumnHeaderContainer, columnIndex);
+
+            if (itemView == null) {
+                itemView = new View(getContext());
+                itemView.setEnabled(false);
+            }
+            mColumnHeaderContainer.addView(itemView);
+
+            itemView.setEnabled(itemView.isEnabled() && mAdapter.areAllItemsEnabled() && mAdapter.isColumnEnabled(columnIndex));
+
+            int finalColumnIndex = columnIndex;
+            itemView.setOnClickListener(view -> {
+                onColumnClick(this, finalColumnIndex);
+                if (mColumnClicListener != null) {
+                    mColumnClicListener.onColumnClick(this, finalColumnIndex);
+                }
+            });
+        }
     }
 
     private void initializationLayout(Context context) {
@@ -161,88 +286,29 @@ public class TableView extends ContentFrameLayout {
 
             @Override
             public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+                if (mAdapter == null || mAdapter.isColumnEmpty()) {
+                    return;
+                }
                 mRowScrollView.scrollBy(dx, dy);
             }
         });
 
         mRowScrollView.setOnTouchListener((view, motionEvent) -> {
+            if (mAdapter == null || mAdapter.isColumnEmpty()) {
+                return view.onTouchEvent(motionEvent);
+            }
             mValueContainer.onTouchEvent(motionEvent);
             return true;
         });
 
         mValueContainer.setAdapter(mValueAdapter = new ValueAdapter(context));
-    }
 
-    private void refreshDatas() {
-        if (mAssembleTask != null) {
-            mAssembleTask.cancel(true);
-            mAssembleTask = null;
-        }
-        if (mAdapter != null) {
-            (mAssembleTask = new AssembleTask()).execute(mAdapter);
-        }
-    }
-
-    private void setRowNames(List<Table.Row> rows) {
-        if (isInvalidated) {
-            mScrollHelper.moveToPosition(0);
-            mRowScrollView.scrollTo(0, 0);
-        }
-        mRowHeaderContainer.removeAllViews();
-        if (mAdapter == null || mAdapter.isEmpty()) {
-            return;
-        }
-        for (int rowIndex = 0; rowIndex < rows.size(); rowIndex++) {
-            View itemView = mAdapter.getRowHeaderView(mInflater, mRowHeaderContainer, rowIndex);
-            ViewGroup.LayoutParams layoutParams;
-            if (itemView == null) {
-                layoutParams = new ViewGroup.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
-                itemView = new View(getContext());
-                itemView.setEnabled(false);
-            } else {
-                layoutParams = itemView.getLayoutParams();
+        mValueAdapter.setOnValueClickListener((Table.Value value) -> {
+            onValueClick(TableView.this, value);
+            if (mValueClickListener != null) {
+                mValueClickListener.onValueClick(TableView.this, value);
             }
-            layoutParams.width = ViewGroup.LayoutParams.MATCH_PARENT;
-            mRowHeaderContainer.addView(itemView, layoutParams);
-
-            itemView.setEnabled(itemView.isEnabled() && mAdapter.areAllItemsEnabled() && mAdapter.isRowEnabled(rowIndex));
-
-            Table.Row row = rows.get(rowIndex);
-
-            itemView.setOnClickListener(view -> {
-                if (mRowClickListener != null) {
-                    mRowClickListener.onRowClick(this, row);
-                }
-            });
-        }
-    }
-
-    private void setColumnNames(int columnCount) {
-        if (isInvalidated) {
-            mContentScrollView.scrollTo(0, 0);
-        }
-        mColumnHeaderContainer.removeAllViews();
-        if (mAdapter == null || mAdapter.isEmpty()) {
-            return;
-        }
-        for (int columnIndex = 0; columnIndex < columnCount; columnIndex++) {
-            View itemView = mAdapter.getColumnHeaderView(mInflater, mColumnHeaderContainer, columnIndex);
-
-            if (itemView == null) {
-                itemView = new View(getContext());
-                itemView.setEnabled(false);
-            }
-            mColumnHeaderContainer.addView(itemView);
-
-            itemView.setEnabled(itemView.isEnabled() && mAdapter.areAllItemsEnabled() && mAdapter.isColumnEnabled(columnIndex));
-
-            int finalColumnIndex = columnIndex;
-            itemView.setOnClickListener(view -> {
-                if (mColumnClicListener != null) {
-                    mColumnClicListener.onColumnClick(this, finalColumnIndex);
-                }
-            });
-        }
+        });
     }
 
     private Drawable getDrawable(@DrawableRes int id) {
@@ -275,7 +341,7 @@ public class TableView extends ContentFrameLayout {
         @Override
         protected Table doInBackground(TableAdapter... adapters) {
             TableAdapter adapter = adapters[0];
-            Table table = new Table();
+            table = new Table();
             if (adapter == null) {
                 return table;
             }
@@ -285,8 +351,10 @@ public class TableView extends ContentFrameLayout {
             for (int rowIndex = 0; rowIndex < rowCount; rowIndex++) {
                 Table.Row row = new Table.Row();
                 row.setRawRowIndex(rowIndex);
+                row.setCurrentRowIndex(rowIndex);
                 for (int columnIndex = 0; columnIndex < columnCount; columnIndex++) {
                     Table.Value value = new Table.Value();
+                    value.setCurrentRowIndex(rowIndex);
                     value.setRawRowIndex(rowIndex);
                     value.setColumnIndex(columnIndex);
                     row.addValue(value);
@@ -329,6 +397,8 @@ public class TableView extends ContentFrameLayout {
                 }
 
                 mValueAdapter.setTable(table);
+
+                onLayoutComplete();
             }
         }
 
@@ -346,26 +416,29 @@ public class TableView extends ContentFrameLayout {
         void onValueClick(TableView view, Table.Value value);
     }
 
-    private class PreviewAdapter extends BaseTableAdapter {
+    private class PreviewAdapter extends BaseAdapter {
 
         private final int mPadding;
 
         public PreviewAdapter() {
-            mPadding = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 8, getResources().getDisplayMetrics());
+            mPadding = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, DEFAULT_PREVIEW_PADDING, mMetrics);
         }
 
+        @NonNull
         @Override
-        public View getColumnHeaderView(LayoutInflater inflater, ViewGroup parent, int columnIndex) {
+        public View getColumnHeaderView(@NonNull LayoutInflater inflater, @NonNull ViewGroup parent, int columnIndex) {
             return getView(String.format("Column%1$s", columnIndex));
         }
 
+        @NonNull
         @Override
-        public View getRowHeaderView(LayoutInflater inflater, ViewGroup parent, int rowIndex) {
+        public View getRowHeaderView(@NonNull LayoutInflater inflater, @NonNull ViewGroup parent, int rowIndex) {
             return getView(String.format("Row%1$s", rowIndex));
         }
 
+        @NonNull
         @Override
-        public View getValueView(LayoutInflater inflater, ViewGroup parent, int columnIndex, int rowIndex) {
+        public View getValueView(@NonNull LayoutInflater inflater, @NonNull ViewGroup parent, int columnIndex, int rowIndex) {
             return getView(String.format("Value%1$s,%2$s", columnIndex, rowIndex));
         }
 

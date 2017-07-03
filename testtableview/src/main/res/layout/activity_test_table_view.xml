@@ -14,7 +14,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <me.box.widget.ui.TableView
+        <me.box.widget.ui.SortTableView
             android:id="@+id/vh_recycler_view"
             android:layout_width="match_parent"
             android:layout_height="match_parent"

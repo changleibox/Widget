@@ -41,21 +41,21 @@ public class MainActivity extends BaseActivity implements SwipeRefreshLayout.OnR
         // mRefreshLayout.setOnRefreshListener(this);
         // mRecyclerView.setOnRowClickListener(new TableView.OnRowClickListener() {
         //     @Override
-        //     public void onRowClick(TableView view, Table.Row row) {
+        //     public void onRowClick(TableView view, TableData.Row row) {
         //         Toast.makeText(getApplicationContext(), String.format("第%1$s行（%2$s，原始在第%3$s行）",
         //                 row.getCurrentRowIndex(), row.getRowName(), row.getRawRowIndex()), Toast.LENGTH_SHORT).show();
         //     }
         // });
         // mRecyclerView.setOnSortListener(new TableView.OnSortListener() {
         //     @Override
-        //     public void onSort(TableView view, int columnIndex, TableView.SortType sortType, List<Table.Row> sortedRows) {
+        //     public void onSort(TableView view, int columnIndex, TableView.SortType sortType, List<TableData.Row> sortedRows) {
         //         Toast.makeText(getApplicationContext(), String.format("第%1$s列，当前按照%2$s排列",
         //                 columnIndex, sortType == TableView.SortType.Reverse ? "从大到小" : "从小到大"), Toast.LENGTH_SHORT).show();
         //     }
         // });
         // mRecyclerView.setOnValueClickListener(new TableView.OnValueClickListener() {
         //     @Override
-        //     public void onValueClick(TableView view, Table.Value value) {
+        //     public void onValueClick(TableView view, TableData.Value value) {
         //         Toast.makeText(getApplicationContext(), String.format("第%1$s行第%2$s列，值是%3$s",
         //                 value.getCurrentRowIndex(), value.getColumnIndex(), value.getLabel()), Toast.LENGTH_SHORT).show();
         //     }
@@ -86,19 +86,19 @@ public class MainActivity extends BaseActivity implements SwipeRefreshLayout.OnR
         // (mTestSortTask = new TestSortTask()).execute();
     }
 
-    // private class TestSortTask extends AsyncTask<Void, Void, Table> {
+    // private class TestSortTask extends AsyncTask<Void, Void, TableData> {
     //
     //     @Override
-    //     protected Table doInBackground(Void... voids) {
-    //         Table table = new Table();
+    //     protected TableData doInBackground(Void... voids) {
+    //         TableData table = new TableData();
     //         table.setHasAvatar(true);
     //         for (int column = 0; column < COLUMNS_COUNT; column++) {
     //             table.addColumnName(String.format("Column%1$s", column));
     //         }
     //         for (int row = 0; row < ROW_COUNT; row++) {
-    //             Table.Row item = new Table.Row("Row" + row);
+    //             TableData.Row item = new TableData.Row("Row" + row);
     //             for (int column = 0; column < COLUMNS_COUNT; column++) {
-    //                 item.addValue(new Table.Value(Math.random()));
+    //                 item.addValue(new TableData.Value(Math.random()));
     //             }
     //             table.addRow(item);
     //         }
@@ -106,7 +106,7 @@ public class MainActivity extends BaseActivity implements SwipeRefreshLayout.OnR
     //     }
     //
     //     @Override
-    //     protected void onPostExecute(Table table) {
+    //     protected void onPostExecute(TableData table) {
     //         mRecyclerView.setTable(table);
     //         mRefreshLayout.setRefreshing(false);
     //     }

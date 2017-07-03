@@ -16,12 +16,14 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import me.box.app.testtableview.activity.BaseActivity;
-import me.box.app.testtableview.entity.Table;
-import me.box.widget.adapter.BaseTableAdapter;
-import me.box.widget.ui.TableView;
+import me.box.app.testtableview.entity.TableData;
+import me.box.widget.impl.SortAdapter;
+import me.box.widget.ui.SortTableView;
 
 /**
  * Created by box on 2017/6/29.
@@ -34,18 +36,18 @@ public class TestTableViewActivity extends BaseActivity implements SwipeRefreshL
     private static final int ROW_COUNT = 15;
     private static final int COLUMNS_COUNT = 11;
 
-    private TableView mTableView;
+    private SortTableView mTableView;
     private SwipeRefreshLayout mRefreshLayout;
 
     private TestSortTask mTestSortTask;
 
-    private TestTableAdapter mTableAdapter;
+    private TestAdapter mTableAdapter;
 
     @Override
     public void onInitViews(@Nullable Bundle savedInstanceState) {
-        mTableView = (TableView) findViewById(R.id.vh_recycler_view);
+        mTableView = (SortTableView) findViewById(R.id.vh_recycler_view);
         mRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.refresh_layout);
-        mTableAdapter = new TestTableAdapter();
+        mTableAdapter = new TestAdapter();
     }
 
     @Override
@@ -83,19 +85,20 @@ public class TestTableViewActivity extends BaseActivity implements SwipeRefreshL
         (mTestSortTask = new TestSortTask()).execute();
     }
 
-    private class TestSortTask extends AsyncTask<Void, Void, Table> {
+    private class TestSortTask extends AsyncTask<Void, Void, TableData> {
 
         @Override
-        protected Table doInBackground(Void... voids) {
-            Table table = new Table();
+        protected TableData doInBackground(Void... voids) {
+            TableData table = new TableData();
             table.setHasAvatar(true);
             for (int column = 0; column < COLUMNS_COUNT; column++) {
                 table.addColumnName(String.format("Column%1$s", column));
             }
             for (int row = 0; row < ROW_COUNT; row++) {
-                Table.Row item = new Table.Row("Row" + row);
+                TableData.Row item = new TableData.Row("Row" + row);
+                item.setCurrentRowIndex(row);
                 for (int column = 0; column < COLUMNS_COUNT; column++) {
-                    item.addValue(new Table.Value(Math.random()));
+                    item.addValue(new TableData.Value(Math.random()));
                 }
                 table.addRow(item);
             }
@@ -103,67 +106,98 @@ public class TestTableViewActivity extends BaseActivity implements SwipeRefreshL
         }
 
         @Override
-        protected void onPostExecute(final Table table) {
+        protected void onPostExecute(final TableData table) {
             mRefreshLayout.setRefreshing(false);
             mTableAdapter.setTable(table);
             mTableAdapter.notifyDataSetInvalidated();
         }
     }
 
-    private class TestTableAdapter extends BaseTableAdapter {
+    private class TestAdapter extends SortAdapter<String, TableData.Row, TableData.Value> {
 
-        private Table mTable;
+        private boolean hasAvatar;
+        private List<TableData.Row> mRows;
 
-        private void setTable(Table table) {
-            this.mTable = table;
+        private void setTable(TableData table) {
+            if (table == null) {
+                return;
+            }
+            hasAvatar = table.isHasAvatar();
+            setNotifyOnChange(false);
+            mRows = table.getRows();
+            setColumns(table.getColumnNames());
+            setRows(mRows);
+            for (int i = 0; i < mRows.size(); i++) {
+                setValuesToRow(i, mRows.get(i).getValues());
+            }
+            notifyDataSetChanged();
         }
 
         @Override
-        public View getColumnHeaderView(LayoutInflater inflater, ViewGroup parent, int columnIndex) {
+        protected View getColumnHeaderView(LayoutInflater inflater, ViewGroup parent, String s, int columnIndex) {
             TableValueView valueView = new TableValueView(TestTableViewActivity.this);
-            valueView.setText(mTable.getColumnNames().get(columnIndex));
+            valueView.setText(s);
             valueView.setMinHeight((int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 48, getResources().getDisplayMetrics()));
             return valueView;
         }
 
         @Override
-        public View getRowHeaderView(LayoutInflater inflater, ViewGroup parent, int rowIndex) {
-            final Table.Row row = mTable.getRows().get(rowIndex);
-
+        protected View getRowHeaderView(LayoutInflater inflater, ViewGroup parent, TableData.Row row, int rowIndex) {
             View itemView = inflater.inflate(R.layout.layout_row_name, parent, false);
             TableValueView rowNameView = itemView.findViewById(R.id.tv_name);
             ImageView ivAvatar = itemView.findViewById(R.id.iv_avatar);
 
-            ivAvatar.setVisibility(mTable.isHasAvatar() ? View.VISIBLE : View.GONE);
+            ivAvatar.setVisibility(hasAvatar ? View.VISIBLE : View.GONE);
             ivAvatar.setImageResource(R.mipmap.ic_launcher_round);
             rowNameView.setText(row.getRowName());
             return itemView;
         }
 
         @Override
-        public View getValueView(LayoutInflater inflater, ViewGroup parent, int columnIndex, int rowIndex) {
-            List<Table.Row> rows = mTable.getRows();
-            if (rows.size() <= rowIndex) {
-                return null;
-            }
-            List<Table.Value> values = rows.get(rowIndex).getValues();
-            if (values.size() <= columnIndex) {
+        protected View getValueView(LayoutInflater inflater, ViewGroup parent, @Nullable TableData.Value value, int columnIndex, int rowIndex) {
+            if (value == null) {
                 return null;
             }
             View itemView = inflater.inflate(R.layout.item_table_value, parent, false);
             TextView tvValue = itemView.findViewById(R.id.tv_value);
-            tvValue.setText(values.get(columnIndex).getLabel());
+            tvValue.setText(value.getLabel());
             return itemView;
         }
 
         @Override
-        public int getColumnCount() {
-            return mTable == null ? 0 : mTable.getColumnNames().size();
+        public void sort(final boolean isOrder, final int columnIndex) {
+            if (mRows == null || mRows.isEmpty()) {
+                return;
+            }
+            Collections.sort(mRows, new Comparator<TableData.Row>() {
+                @Override
+                public int compare(TableData.Row row1, TableData.Row row2) {
+                    List<TableData.Value> values1 = row1.getValues();
+                    List<TableData.Value> values2 = row2.getValues();
+                    if (values1.size() <= columnIndex || values2.size() <= columnIndex) {
+                        return 0;
+                    }
+                    double value1 = values1.get(columnIndex).getValue();
+                    double value2 = values2.get(columnIndex).getValue();
+                    return isOrder ? Double.compare(value1, value2) : Double.compare(value2, value1);
+                }
+            });
+            setRows(mRows);
+            for (int i = 0; i < mRows.size(); i++) {
+                setValuesToRow(i, mRows.get(i).getValues());
+            }
         }
 
         @Override
-        public int getRowCount() {
-            return mTable == null ? 0 : mTable.getRows().size();
+        public void reverse() {
+            if (mRows == null || mRows.isEmpty()) {
+                return;
+            }
+            Collections.reverse(mRows);
+            setRows(mRows);
+            for (int i = 0; i < mRows.size(); i++) {
+                setValuesToRow(i, mRows.get(i).getValues());
+            }
         }
     }
 
