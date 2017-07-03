@@ -75,6 +75,7 @@ public class TableView extends ContentFrameLayout {
     private OnValueClickListener mValueClickListener;
 
     private boolean isInvalidated;
+    private boolean isSetAdapter;
 
     private final DisplayMetrics mMetrics;
 
@@ -139,6 +140,10 @@ public class TableView extends ContentFrameLayout {
 
         this.mValueAdapter.setTableAdapter(adapter);
 
+        if (mAssembleTask != null) {
+            mAssembleTask.cancel(true);
+            mAssembleTask = null;
+        }
         refreshDatas();
     }
 
@@ -170,6 +175,9 @@ public class TableView extends ContentFrameLayout {
     void onValueClick(TableView view, Table.Value value) {
     }
 
+    /**
+     * 注意：此方法只在调用{@link #setAdapter(TableAdapter)}的时候才会回调
+     */
     void onLayoutComplete() {
     }
 
@@ -177,6 +185,8 @@ public class TableView extends ContentFrameLayout {
         if (mAssembleTask != null) {
             mAssembleTask.cancel(true);
             mAssembleTask = null;
+        } else {
+            isSetAdapter = true;
         }
         if (mAdapter != null) {
             (mAssembleTask = new AssembleTask()).execute(mAdapter);
@@ -418,7 +428,10 @@ public class TableView extends ContentFrameLayout {
 
                 mValueAdapter.setTable(table);
 
-                onLayoutComplete();
+                if (isSetAdapter) {
+                    isSetAdapter = false;
+                    onLayoutComplete();
+                }
             }
         }
 
