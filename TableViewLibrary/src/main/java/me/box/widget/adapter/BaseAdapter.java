@@ -6,6 +6,7 @@ package me.box.widget.adapter;
 
 import android.database.DataSetObservable;
 import android.database.DataSetObserver;
+import android.os.Looper;
 import android.support.annotation.MainThread;
 import android.support.annotation.NonNull;
 
@@ -26,13 +27,17 @@ public abstract class BaseAdapter implements TableAdapter {
     @MainThread
     @Override
     public void notifyDataSetChanged() {
-        mDataSetObservable.notifyChanged();
+        if (Looper.myLooper() == Looper.getMainLooper()) {
+            mDataSetObservable.notifyChanged();
+        }
     }
 
     @MainThread
     @Override
     public void notifyDataSetInvalidated() {
-        mDataSetObservable.notifyInvalidated();
+        if (Looper.myLooper() == Looper.getMainLooper()) {
+            mDataSetObservable.notifyInvalidated();
+        }
     }
 
     @Override
